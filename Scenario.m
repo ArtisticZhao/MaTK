@@ -46,6 +46,12 @@ classdef Scenario
             % 将仿真跳转到指定时间
             % time 
         end
+        
+        function animationJumpForward1day(obj)
+             % 将仿真向前快进1天
+             ctime = obj.root.CurrentTime;
+             obj.root.CurrentTime = ctime + 24*3600;
+        end
     end
     
 end

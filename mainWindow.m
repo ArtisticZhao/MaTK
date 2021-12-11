@@ -22,7 +22,7 @@ function varargout = mainWindow(varargin)
 
 % Edit the above text to modify the response to help mainWindow
 
-% Last Modified by GUIDE v2.5 11-Dec-2021 10:53:00
+% Last Modified by GUIDE v2.5 11-Dec-2021 12:15:25
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -64,7 +64,7 @@ global OM
 OM = actxserver('AgStkObjects11.AgStkObjectRoot');
 global scenario
 scenario = Scenario(OM);
-scenario.newAndConfigScenario('Test');
+
 
 
 % --- Outputs from this function are returned to the command line.
@@ -92,4 +92,14 @@ function pb_animation_stop_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 global scenario
+scenario.animationJumpForward1day();
 scenario.animationPause();
+
+
+% --- Executes on button press in pb_newScenario.
+function pb_newScenario_Callback(hObject, eventdata, handles)
+% hObject    handle to pb_newScenario (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+global scenario
+scenario.newAndConfigScenario('Test');
