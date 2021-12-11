@@ -84,6 +84,7 @@ function pb_animation_playforward_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 global scenario
+scenario.setPeriod('30 Jul 2014 16:00:05.000', '31 Jul 2014 17:00:05.000');
 scenario.animationPlay();
 
 % --- Executes on button press in pb_animation_stop.
@@ -92,7 +93,7 @@ function pb_animation_stop_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 global scenario
-scenario.animationJumpForward1day();
+scenario.animationSetCurrentTime('30 Jul 2015 16:00:05.000');
 scenario.animationPause();
 
 

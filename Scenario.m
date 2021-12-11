@@ -1,4 +1,4 @@
-classdef Scenario
+classdef Scenario < handle
     % Scenario 控制类
     % functions: 
     %   - Scenario
@@ -10,6 +10,8 @@ classdef Scenario
     
     properties
         root  % root: object of AgStkObjectRoot
+        start_time % type: datetime
+        stop_time  % type: datetime
     end
     
     methods
@@ -30,8 +32,13 @@ classdef Scenario
         
         function setPeriod(obj, start_time, stop_time)
             % 设置仿真的开始和结束时间
-            % start_time
-            % stop_time
+            % start_time  e.g. '30 Jul 2014 16:00:05.000'
+            % stop_time   e.g. '31 Jul 2014 16:00:00.000'
+            obj.root.CurrentScenario.SetTimePeriod(start_time, stop_time);
+            obj.root.CurrentScenario.Epoch = start_time;
+            obj.start_time = datetime(start_time,'InputFormat','dd MMM yyyy HH:mm:ss.SSS', 'local', 'en_US');
+            obj.stop_time = datetime(stop_time,'InputFormat','dd MMM yyyy HH:mm:ss.SSS', 'local', 'en_US');
+            obj.root.CurrentTime = 0;
         end
         
         function animationPlay(obj)
@@ -44,7 +51,10 @@ classdef Scenario
         
         function animationSetCurrentTime(obj, time)
             % 将仿真跳转到指定时间
-            % time 
+            % time: e.g. '30 Jul 2014 16:00:05.000'
+            target_time = datetime(time,'InputFormat','dd MMM yyyy HH:mm:ss.SSS', 'local', 'en_US');
+            d_time = seconds(target_time - obj.start_time);
+            obj.root.CurrentTime = d_time;
         end
         
         function animationJumpForward1day(obj)
