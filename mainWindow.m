@@ -22,7 +22,7 @@ function varargout = mainWindow(varargin)
 
 % Edit the above text to modify the response to help mainWindow
 
-% Last Modified by GUIDE v2.5 11-Dec-2021 12:15:25
+% Last Modified by GUIDE v2.5 14-Dec-2021 15:45:42
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -66,7 +66,6 @@ global scenario
 scenario = Scenario(OM);
 
 
-
 % --- Outputs from this function are returned to the command line.
 function varargout = mainWindow_OutputFcn(hObject, eventdata, handles) 
 % varargout  cell array for returning output args (see VARARGOUT);
@@ -84,7 +83,6 @@ function pb_animation_playforward_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 global scenario
-scenario.setPeriod('30 Jul 2014 16:00:05.000', '31 Jul 2014 17:00:05.000');
 scenario.animationPlay();
 
 % --- Executes on button press in pb_animation_stop.
@@ -93,7 +91,6 @@ function pb_animation_stop_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 global scenario
-scenario.animationSetCurrentTime('30 Jul 2015 16:00:05.000');
 scenario.animationPause();
 
 
@@ -104,3 +101,16 @@ function pb_newScenario_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 global scenario
 scenario.newAndConfigScenario('Test');
+
+
+% --- Executes on button press in pb_add_sat.
+function pb_add_sat_Callback(hObject, eventdata, handles)
+% hObject    handle to pb_add_sat (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+global scenario
+scenario.setPeriod('1 Jul 2007 12:00:00.000', '1 Jul 2007 17:00:00.000');
+scenario.removeAll();
+% (obj, name, semimajor_axis_km, eccentricity, inclination_deg, RANN, argument_of_perigee_deg, ture_anomaly_deg)
+scenario.insertSatByOrbitalElements('sat1', 65280, 7215.65, 0, 60, 181, 0, 50);
+scenario.insertMissileByEFile('FXQ',55280, 'gj/1.e');

@@ -5,6 +5,7 @@ STK custom APP based on Matlab
 
 - [x] 显示STK 2D 3D 窗口
 - [x] 添加卫星
+- [x] 添加missile
 - [x] 播放仿真动画
 - [x] 播放仿真动画的时间控制
 - [ ] 添加地面站
