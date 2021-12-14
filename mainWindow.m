@@ -111,6 +111,7 @@ function pb_add_sat_Callback(hObject, eventdata, handles)
 global scenario
 scenario.setPeriod('1 Jul 2007 12:00:00.000', '1 Jul 2007 17:00:00.000');
 scenario.removeAll();
-% (obj, name, semimajor_axis_km, eccentricity, inclination_deg, RANN, argument_of_perigee_deg, ture_anomaly_deg)
+% (obj, name, color, semimajor_axis_km, eccentricity, inclination_deg, RANN, argument_of_perigee_deg, ture_anomaly_deg)
 scenario.insertSatByOrbitalElements('sat1', 65280, 7215.65, 0, 60, 181, 0, 50);
 scenario.insertMissileByEFile('FXQ',55280, 'gj/1.e');
+scenario.insertFacilityByGeo('Taiyuan', 16776960, 38.84, 111.61, 1.452);
