@@ -22,7 +22,7 @@ function varargout = mainWindow(varargin)
 
 % Edit the above text to modify the response to help mainWindow
 
-% Last Modified by GUIDE v2.5 14-Dec-2021 15:45:42
+% Last Modified by GUIDE v2.5 19-Dec-2021 21:22:05
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -83,7 +83,7 @@ function pb_animation_playforward_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 global scenario
-scenario.startRecordToFile('C:\MyTemp\test.wmv');
+% scenario.startRecordToFile('C:\MyTemp\test.wmv');
 scenario.animationPlay();
 
 % --- Executes on button press in pb_animation_stop.
@@ -93,7 +93,7 @@ function pb_animation_stop_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 global scenario
 scenario.animationPause();
-scenario.stopRecordToFile();
+% scenario.stopRecordToFile();
 
 % --- Executes on button press in pb_newScenario.
 function pb_newScenario_Callback(hObject, eventdata, handles)
@@ -117,3 +117,15 @@ scenario.removeAll();
 scenario.insertSatByOrbitalElements('sat1', 65280, 7215.65, 0, 60, 181, 0, 50);
 scenario.insertMissileByEFile('FXQ',55280, 'gj/1.e');
 scenario.insertFacilityByGeo('Taiyuan', 16776960, 38.84, 111.61, 1.452);
+
+
+% --- Executes on button press in pb_test.
+function pb_test_Callback(hObject, eventdata, handles)
+% hObject    handle to pb_test (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+global scenario
+[Name, AERTimes, Az, El, Range] = scenario.accessAER(60);
+
+
+

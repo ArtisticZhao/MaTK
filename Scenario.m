@@ -19,7 +19,8 @@ classdef Scenario < handle
             % OM: object of AgStkObjectRoot
             obj.root = OM;
         end
-
+    
+        %% 场景设置
         function newAndConfigScenario(obj, scenarioName)
             % scenarioName: name of new scenario
             obj.root.UnitPreferences.SetCurrentUnit('LatitudeUnit', 'deg');
@@ -47,6 +48,7 @@ classdef Scenario < handle
             obj.root.CurrentTime = 0;
         end
 
+        %% 动画设置
         function animationPlay(obj)
            obj.root.PlayForward();
         end
@@ -69,6 +71,7 @@ classdef Scenario < handle
              obj.root.CurrentTime = ctime + 24*3600;
         end
 
+        %% 添加/删除对象
         function insertSatByOrbitalElements(obj, name, color, semimajor_axis_km, eccentricity, inclination_deg, RANN, argument_of_perigee_deg, ture_anomaly_deg)
             % args:
             %       color: <int>
@@ -144,8 +147,8 @@ classdef Scenario < handle
            end
         end
         
+        %% 录制视频相关
         function startRecordToFile(obj, file_name)
-%            obj.root.ExecuteCommand('RecordMovie3D * Record On FileFormat AVI OutputDir "c:\MyTemp"');
             recording = obj.root.CurrentScenario.SceneManager.Scenes.Item(cast(0,'int32')).Camera.VideoRecording;
             recording.StartRecording(file_name, 5000, 30);
         end
@@ -153,6 +156,36 @@ classdef Scenario < handle
         function stopRecordToFile(obj)
             recording = obj.root.CurrentScenario.SceneManager.Scenes.Item(cast(0,'int32')).Camera.VideoRecording;
             recording.StopRecording();
+        end
+        
+        %% Chains 相关
+        function chain=getChain(obj)
+           scenario_objs =  obj.root.CurrentScenario.Children;
+           chains = scenario_objs.GetElements('eChain');
+           if chains.Count == 1
+               chain = chains.Item(cast(0,'int32'));
+           end
+           % TODO: 没有处理空返回值!
+        end
+        
+        function [Name, AERTimes, Az, El, Range]=accessAER(obj, timeStep)
+           chain = obj.getChain(); 
+           chain.ClearAccess();
+           chain.ComputeAccess();
+           accessAER = chain.DataProviders.Item('Access AER Data').Exec(obj.root.CurrentScenario.StartTime, obj.root.CurrentScenario.StopTime,timeStep);
+           % 为了拼接,先得有头
+           Name = cell2mat(accessAER.Interval.Item(cast(0,'int32')).DataSets.GetDataSetByName('Strand Name').GetValues);
+           AERTimes = cell2mat(accessAER.Interval.Item(cast(0,'int32')).DataSets.GetDataSetByName('Time').GetValues);
+           Az = cell2mat(accessAER.Interval.Item(cast(0,'int32')).DataSets.GetDataSetByName('Azimuth').GetValues);
+           El = cell2mat(accessAER.Interval.Item(cast(0,'int32')).DataSets.GetDataSetByName('Elevation').GetValues);
+           Range = cell2mat(accessAER.Interval.Item(cast(0,'int32')).DataSets.GetDataSetByName('Range').GetValues);
+           for i = 1:1:accessAER.Interval.Count-1
+               Name = [Name; cell2mat(accessAER.Interval.Item(cast(i,'int32')).DataSets.GetDataSetByName('Strand Name').GetValues)];
+               AERTimes = [AERTimes; cell2mat(accessAER.Interval.Item(cast(i,'int32')).DataSets.GetDataSetByName('Time').GetValues)];
+               Az = [Az; cell2mat(accessAER.Interval.Item(cast(i,'int32')).DataSets.GetDataSetByName('Azimuth').GetValues)];
+               El = [El; cell2mat(accessAER.Interval.Item(cast(i,'int32')).DataSets.GetDataSetByName('Elevation').GetValues)];
+               Range = [Range; cell2mat(accessAER.Interval.Item(cast(i,'int32')).DataSets.GetDataSetByName('Range').GetValues)];
+           end
         end
     end
 
