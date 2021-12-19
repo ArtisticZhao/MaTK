@@ -83,6 +83,7 @@ function pb_animation_playforward_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 global scenario
+scenario.startRecordToFile('C:\MyTemp\test.wmv');
 scenario.animationPlay();
 
 % --- Executes on button press in pb_animation_stop.
@@ -92,7 +93,7 @@ function pb_animation_stop_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 global scenario
 scenario.animationPause();
-
+scenario.stopRecordToFile();
 
 % --- Executes on button press in pb_newScenario.
 function pb_newScenario_Callback(hObject, eventdata, handles)
@@ -100,7 +101,8 @@ function pb_newScenario_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 global scenario
-scenario.newAndConfigScenario('Test');
+% scenario.newAndConfigScenario('Test');
+scenario.loadScenario('C:\\Users\\lilacsat\\Documents\\STK 11 (x64)\\test1\\Scenario.sc');
 
 
 % --- Executes on button press in pb_add_sat.

@@ -29,7 +29,13 @@ classdef Scenario < handle
             obj.root.CloseScenario;
             obj.root.NewScenario(scenarioName);
         end
-
+        
+        function loadScenario(obj, scenarioPath)
+            % close old scenario
+            obj.root.CloseScenario;
+            obj.root.LoadScenario(scenarioPath)
+        end
+       
         function setPeriod(obj, start_time, stop_time)
             % 设置仿真的开始和结束时间
             % start_time  e.g. '30 Jul 2014 16:00:05.000'
@@ -136,6 +142,17 @@ classdef Scenario < handle
                % 会自动减一 所以一直删除index=0即可
                scenario_objs.Item(cast(0,'int32')).Unload();
            end
+        end
+        
+        function startRecordToFile(obj, file_name)
+%            obj.root.ExecuteCommand('RecordMovie3D * Record On FileFormat AVI OutputDir "c:\MyTemp"');
+            recording = obj.root.CurrentScenario.SceneManager.Scenes.Item(cast(0,'int32')).Camera.VideoRecording;
+            recording.StartRecording(file_name, 5000, 30);
+        end
+        
+        function stopRecordToFile(obj)
+            recording = obj.root.CurrentScenario.SceneManager.Scenes.Item(cast(0,'int32')).Camera.VideoRecording;
+            recording.StopRecording();
         end
     end
 
