@@ -127,8 +127,7 @@ function pb_test_Callback(hObject, eventdata, handles)
 global scenario
 % [Name, AERTimes, Az, El, Range] = scenario.accessAER(60);
 
-scenario.getStartTime()
-scenario.getStopTime()
+scenario.getCurrentTime()
 
 
 

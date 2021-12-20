@@ -78,6 +78,12 @@ classdef Scenario < handle
              ctime = obj.root.CurrentTime;
              obj.root.CurrentTime = ctime + 24*3600;
         end
+        
+        function current_time=getCurrentTime(obj)
+            % current_time 是当前时刻减去obj.root.CurrentScenario.Epoch 的seconds数,
+            % 通常 Epoch = StartTime
+            current_time = obj.root.CurrentTime;
+        end
 
         %% 添加/删除对象
         function insertSatByOrbitalElements(obj, name, color, semimajor_axis_km, eccentricity, inclination_deg, RANN, argument_of_perigee_deg, ture_anomaly_deg)
