@@ -47,6 +47,14 @@ classdef Scenario < handle
             obj.stop_time = datetime(stop_time,'InputFormat','dd MMM yyyy HH:mm:ss.SSS', 'local', 'en_US');
             obj.root.CurrentTime = 0;
         end
+        
+        function start_time=getStartTime(obj)
+           start_time = obj.root.CurrentScenario.StartTime;
+        end
+        
+        function stop_time=getStopTime(obj)
+           stop_time = obj.root.CurrentScenario.StopTime;
+        end
 
         %% ¶¯»­ÉèÖÃ
         function animationPlay(obj)
