@@ -12,6 +12,13 @@ classdef Scenario < handle
         root  % root: object of AgStkObjectRoot
         start_time % type: datetime
         stop_time  % type: datetime
+        
+        % for AER report
+        Name
+        AERTimes
+        Az
+        El
+        Range
     end
 
     methods
@@ -200,6 +207,10 @@ classdef Scenario < handle
                El = [El; cell2mat(accessAER.Interval.Item(cast(i,'int32')).DataSets.GetDataSetByName('Elevation').GetValues)];
                Range = [Range; cell2mat(accessAER.Interval.Item(cast(i,'int32')).DataSets.GetDataSetByName('Range').GetValues)];
            end
+           obj.Name = Name;
+           obj.AERTimes = AERTimes;
+           obj.Az = Az;
+           obj.El = El;
            % save to file
            if nargin == 3
                T = table(Name,AERTimes,Az,El,Range);
