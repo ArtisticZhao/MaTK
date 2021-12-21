@@ -182,7 +182,7 @@ classdef Scenario < handle
            % TODO: 没有处理空返回值!
         end
         
-        function [Name, AERTimes, Az, El, Range]=accessAER(obj, timeStep)
+        function [Name, AERTimes, Az, El, Range]=accessAER(obj, timeStep, filename)
            chain = obj.getChain(); 
            chain.ClearAccess();
            chain.ComputeAccess();
@@ -199,6 +199,11 @@ classdef Scenario < handle
                Az = [Az; cell2mat(accessAER.Interval.Item(cast(i,'int32')).DataSets.GetDataSetByName('Azimuth').GetValues)];
                El = [El; cell2mat(accessAER.Interval.Item(cast(i,'int32')).DataSets.GetDataSetByName('Elevation').GetValues)];
                Range = [Range; cell2mat(accessAER.Interval.Item(cast(i,'int32')).DataSets.GetDataSetByName('Range').GetValues)];
+           end
+           % save to file
+           if nargin == 3
+               T = table(Name,AERTimes,Az,El,Range);
+               writetable(T,filename)
            end
         end
     end

@@ -125,9 +125,9 @@ function pb_test_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 global scenario
-% [Name, AERTimes, Az, El, Range] = scenario.accessAER(60);
 
-scenario.getCurrentTime()
+[Name, AERTimes, Az, El, Range]=scenario.accessAER(60, 'test.xlsx');
+
 
 
 
