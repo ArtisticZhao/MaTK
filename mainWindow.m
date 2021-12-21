@@ -126,8 +126,7 @@ function pb_test_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 global scenario
 
-[Name, AERTimes, Az, El, Range]=scenario.accessAER(60, 'test.xlsx');
-scenario.Name
+scenario.animationReset()
 
 
 

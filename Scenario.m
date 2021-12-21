@@ -71,6 +71,10 @@ classdef Scenario < handle
         function animationPause(obj)
            obj.root.Pause();
         end
+        
+        function animationReset(obj)
+            obj.root.Rewind(); 
+        end
 
         function animationSetCurrentTime(obj, time)
             % 将仿真跳转到指定时间
