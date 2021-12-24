@@ -1,18 +1,12 @@
 classdef Scenario < handle
     % Scenario 控制类
-    % functions:
-    %   - Scenario
-    %   - newAndConfigScenario
-    %   - setPeriod
-    %   - animationPlay
-    %   - animationPause
-    %   - animationSetCurrentTime
 
     properties
         root  % root: object of AgStkObjectRoot
         start_time % type: datetime
         stop_time  % type: datetime
         
+        objsPath % <cell char> 场景中全部的对象，包括子对象
         % for AER report
         Name
         AERTimes
@@ -29,7 +23,9 @@ classdef Scenario < handle
     
         %% 场景设置
         function newAndConfigScenario(obj, scenarioName)
-            % scenarioName: name of new scenario
+            % 关闭并新建场景
+            % Args:
+            %   - scenarioName <char>: 场景名字
             obj.root.UnitPreferences.SetCurrentUnit('LatitudeUnit', 'deg');
             obj.root.UnitPreferences.SetCurrentUnit('LongitudeUnit', 'deg');
             obj.root.UnitPreferences.SetCurrentUnit('DateFormat', 'UTCG');
@@ -39,6 +35,9 @@ classdef Scenario < handle
         end
         
         function loadScenario(obj, scenarioPath)
+            % 从sc文件中加载场景
+            % Args:
+            %   - scenarioPath <char>: sc文件的路径
             % close old scenario
             obj.root.CloseScenario;
             obj.root.LoadScenario(scenarioPath)
@@ -46,8 +45,9 @@ classdef Scenario < handle
        
         function setPeriod(obj, start_time, stop_time)
             % 设置仿真的开始和结束时间
-            % start_time  e.g. '30 Jul 2014 16:00:05.000'
-            % stop_time   e.g. '31 Jul 2014 16:00:00.000'
+            % Args:
+            %   - start_time <char>: 仿真的开始时间 e.g. '30 Jul 2014 16:00:05.000'
+            %   - stop_time <char>:  仿真的结束时间 e.g. '31 Jul 2014 16:00:00.000'
             obj.root.CurrentScenario.SetTimePeriod(start_time, stop_time);
             obj.root.CurrentScenario.Epoch = start_time;
             obj.start_time = datetime(start_time,'InputFormat','dd MMM yyyy HH:mm:ss.SSS', 'local', 'en_US');
@@ -56,20 +56,20 @@ classdef Scenario < handle
         end
         
         function start_time=getStartTime(obj)
-           start_time = obj.root.CurrentScenario.StartTime;
+            start_time = obj.root.CurrentScenario.StartTime;
         end
         
         function stop_time=getStopTime(obj)
-           stop_time = obj.root.CurrentScenario.StopTime;
+            stop_time = obj.root.CurrentScenario.StopTime;
         end
 
         %% 动画设置
         function animationPlay(obj)
-           obj.root.PlayForward();
+            obj.root.PlayForward();
         end
 
         function animationPause(obj)
-           obj.root.Pause();
+            obj.root.Pause();
         end
         
         function animationReset(obj)
@@ -86,28 +86,39 @@ classdef Scenario < handle
 
         function animationSetCurrentTime(obj, time)
             % 将仿真跳转到指定时间
-            % time: e.g. '30 Jul 2014 16:00:05.000'
+            % Args:
+            %   - time <char>: 想要跳转的时间日期 e.g. '30 Jul 2014 16:00:05.000'
             target_time = datetime(time,'InputFormat','dd MMM yyyy HH:mm:ss.SSS', 'local', 'en_US');
             d_time = seconds(target_time - obj.start_time);
             obj.root.CurrentTime = d_time;
         end
 
         function animationJumpForward1day(obj)
-             % 将仿真向前快进1天
-             ctime = obj.root.CurrentTime;
-             obj.root.CurrentTime = ctime + 24*3600;
+            % 将仿真向前快进1天
+            ctime = obj.root.CurrentTime;
+            obj.root.CurrentTime = ctime + 24*3600;
         end
         
         function current_time=getCurrentTime(obj)
-            % current_time 是当前时刻减去obj.root.CurrentScenario.Epoch 的seconds数,
-            % 通常 Epoch = StartTime
+            % 获取当前动画时间
+            % Returns:
+            %   - current_time <double>: 是当前时刻减去obj.root.CurrentScenario.Epoch 的seconds数,
+            %                            通常 Epoch = StartTime
             current_time = obj.root.CurrentTime;
         end
 
-        %% 添加/删除对象
+        %% 添加/删除对象: Satellite Missile Sensor Facility
         function insertSatByOrbitalElements(obj, name, color, semimajor_axis_km, eccentricity, inclination_deg, RANN, argument_of_perigee_deg, ture_anomaly_deg)
-            % args:
-            %       color: <int>
+            % 根据轨道六根数添加卫星
+            % Args:
+            %   - name <char>: 名字
+            %   - color <int>: 颜色
+            %   - semimajor_axis_km <double>: 轨道半长轴/km
+            %   - eccentricity <double>:  偏心率/
+            %   - inclination_deg <double>: 轨道倾角/°
+            %   - RANN <double>: 升交点赤经/°
+            %   - argument_of_perigee_deg <double>: 近地点幅角/°
+            %   - ture_anomaly_deg <double>: 真近地点角/°
             satellite = obj.root.CurrentScenario.Children.New('eSatellite', name);
             % 设置轨道颜色
             graphics = satellite.Graphics;
@@ -137,6 +148,11 @@ classdef Scenario < handle
         end
 
         function insertMissileByEFile(obj, name, color, path_of_e)
+            % 根据e文件路径添加missile
+            % Args:
+            %   - name <char>: 名字
+            %   - color <int>: 颜色
+            %   - path_of_e <char>: e文件路径
             missile = obj.root.CurrentScenario.Children.New('eMissile',name);
             missile.SetTrajectoryType('ePropagatorStkExternal');   % 设置外部文件
             % 设置轨道颜色
@@ -157,17 +173,18 @@ classdef Scenario < handle
         end
         
         function attachSensor(obj, father, name, coneHalfAngle, Az, El)
-            % Args:  1. father: 父类对象, 如sat或missile
-            %        2. name:   名称
-            %        3. coneHalfAngle: 圆锥传感器半锥角
-            %        4. [Az]: 可选, 传感器位置，方位角
-            %        5. [El]: 可选, 传感器位置，底部高度
+            % 为目标添加传感器
+            % Args:  
+            %   - father <AgStkObject>: 父类对象, 如sat或missile
+            %   - name <char>:   名称
+            %   - coneHalfAngle <double>: 圆锥传感器半锥角
+            %   - [Az <double>]: 可选, 传感器位置，方位角
+            %   - [El <double>]: 可选, 传感器位置，底部高度
             sensor = father.Children.New('eSensor', name);
             % 定义简单圆锥角传感器, 需要两个参数:
-            % Args: 1.ConeAngle: 参数为锥角
-            %       2.AngularResolution: Angular separation between points
-            %       in a pattern. 为角分辨率
-            % Angular separation between points in a pattern 
+            % Args: 
+            %   - ConeAngle: Angular separation between points in a pattern  参数为半锥角
+            %   - AngularResolution: Angular separation between points in a pattern. 为角分辨率
             sensor.CommonTasks.SetPatternSimpleConic(coneHalfAngle, 0.1);  
             if nargin == 6
                 % 定义传感器指向
@@ -178,6 +195,13 @@ classdef Scenario < handle
         end
 
         function insertFacilityByGeo(obj, name, color, latitude, longitude, altitude)
+            % 根据经纬度添加设施
+            % Args:
+            %   - name <char>: 名字
+            %   - color <int>: 颜色值
+            %   - latitude <double>: 经度
+            %   - longitude <double>: 纬度
+            %   - altitude <double>: 海拔 (km)
             facility = obj.root.CurrentScenario.Children.New('eFacility', name);
             % 设置颜色
             graphics = facility.Graphics;
@@ -199,6 +223,9 @@ classdef Scenario < handle
         end
         
         function dict=getAllObj(obj)
+            % 返回当前场景下的全部对象(不包括子对象)
+            % Returns:
+            %   - dict <struct char char>: struct的key为对象的简称名字，value为STKpath
             dict = struct();
             scenario_objs =  obj.root.CurrentScenario.Children;
             for i = 0: scenario_objs.Count - 1
@@ -206,21 +233,50 @@ classdef Scenario < handle
             end
         end
         
+        function list=getAllObjWithChildren(obj, father)
+            % 返回场景下的所有对象,包括子对象
+            % Args: 函数会自动递归调用, 顶层调用无需传参！
+            %   - father <AgStkObject>: STK 对象
+            % Returns:
+            %   - list <cell char>: 当前场景下的全部对象的STKpath，包括子对象
+            if nargin==2
+                objs = father;
+            else
+                objs =  obj.root.CurrentScenario;
+                obj.objsPath = {};
+            end
+            
+            if ~objs.HasChildren
+               return
+            end
+                
+            for i = 0: objs.Children.Count - 1
+                obj.getAllObjWithChildren(objs.Children.Item(cast(i,'int32')));
+                obj.objsPath(end+1) = {objs.Children.Item(cast(i,'int32')).Path};
+            end
+            list = obj.objsPath;
+        end
+        
         function removeByPath(obj, path)
+            % 根据STKpath删除目标
+            % Args: 
+            %   - path: e.g.  '/Application/STK/Scenario/Scenario/Missile/FXQ/Sensor/SA'
             scenario_objs =  obj.root.CurrentScenario.Children;
             for i = 0: scenario_objs.Count - 1
                 if strcmp(scenario_objs.Item(cast(i,'int32')).Path, path)
                     scenario_objs.Item(cast(i,'int32')).Unload();
+                    return
                 end
             end
         end
 
         function removeAll(obj)
-           scenario_objs =  obj.root.CurrentScenario.Children;
-           for i = 0: scenario_objs.Count - 1
-               % 会自动减一 所以一直删除index=0即可
-               scenario_objs.Item(cast(0,'int32')).Unload();
-           end
+            % 删除场景下的全部对象
+            scenario_objs =  obj.root.CurrentScenario.Children;
+            for i = 0: scenario_objs.Count - 1
+                % 会自动减一 所以一直删除index=0即可
+                scenario_objs.Item(cast(0,'int32')).Unload();
+            end
         end
         
         %% 录制视频相关
@@ -235,44 +291,97 @@ classdef Scenario < handle
         end
         
         %% Chains 相关
-        function chain=getChain(obj)
-           scenario_objs =  obj.root.CurrentScenario.Children;
-           chains = scenario_objs.GetElements('eChain');
-           if chains.Count == 1
-               chain = chains.Item(cast(0,'int32'));
-           end
-           % TODO: 没有处理空返回值!
+        function newConstellation(obj, name, objects)
+            % 创建集合，一般是传感器的集合
+            % Args: 
+            %   - name: 名字
+            %   - objects <cell char>: (传感器)对象STKpath的集合 形式应为 nx1
+            constellation = obj.root.CurrentScenario.Children.New('eConstellation', name);
+            for i=1:size(objects)
+                constellation.Objects.Add(char(objects(i)));
+            end
+            disp(['Add ' num2str(constellation.Objects.Count) ' item(s) to Constellation!'])
+        end
+        
+        function newChain(obj, name, objects)
+            % 创建Chain
+            % Args: 
+            %   - name: 名字
+            %   - objects <cell char>: 对象STKpath的集合 形式应为 nx1
+            chain = obj.root.CurrentScenario.Children.New('eChain', name);
+            for i=1:size(objects)
+                chain.Objects.Add(char(objects(i)));
+            end
+        end
+        
+        function chain=getChain(obj, path)
+            % 获取当前场景下第一个或指定 Chain
+            % Args:
+            %   - [path <char>]: 可选参数，应为Chain的Path
+            scenario_objs =  obj.root.CurrentScenario.Children;
+            chains = scenario_objs.GetElements('eChain');
+            if chains.Count >= 1
+                if nargin == 2
+                    % 指定path
+                    for i = 0: chains.Count - 1
+                       if strcmp(chains.Item(cast(i,'int32')).Path, path)
+                           chain = chains.Item(cast(i,'int32'));
+                           return
+                       end
+                    end
+                    chain = nan;
+                    disp('No chain found in scenario by given path!')
+                else
+                    % 没有指定path, 则获取第一个chain
+                    chain = chains.Item(cast(0,'int32'));
+                end
+            else
+                chain = nan;
+            end
         end
         
         function [Name, AERTimes, Az, El, Range]=accessAER(obj, timeStep, filename)
-           chain = obj.getChain(); 
-           chain.ClearAccess();
-           chain.ComputeAccess();
-           accessAER = chain.DataProviders.Item('Access AER Data').Exec(obj.root.CurrentScenario.StartTime, obj.root.CurrentScenario.StopTime,timeStep);
-           % 为了拼接,先得有头
-           Name = cell2mat(accessAER.Interval.Item(cast(0,'int32')).DataSets.GetDataSetByName('Strand Name').GetValues);
-           AERTimes = cell2mat(accessAER.Interval.Item(cast(0,'int32')).DataSets.GetDataSetByName('Time').GetValues);
-           Az = cell2mat(accessAER.Interval.Item(cast(0,'int32')).DataSets.GetDataSetByName('Azimuth').GetValues);
-           El = cell2mat(accessAER.Interval.Item(cast(0,'int32')).DataSets.GetDataSetByName('Elevation').GetValues);
-           Range = cell2mat(accessAER.Interval.Item(cast(0,'int32')).DataSets.GetDataSetByName('Range').GetValues);
-           for i = 1:1:accessAER.Interval.Count-1
-               Name = [Name; cell2mat(accessAER.Interval.Item(cast(i,'int32')).DataSets.GetDataSetByName('Strand Name').GetValues)];
-               AERTimes = [AERTimes; cell2mat(accessAER.Interval.Item(cast(i,'int32')).DataSets.GetDataSetByName('Time').GetValues)];
-               Az = [Az; cell2mat(accessAER.Interval.Item(cast(i,'int32')).DataSets.GetDataSetByName('Azimuth').GetValues)];
-               El = [El; cell2mat(accessAER.Interval.Item(cast(i,'int32')).DataSets.GetDataSetByName('Elevation').GetValues)];
-               Range = [Range; cell2mat(accessAER.Interval.Item(cast(i,'int32')).DataSets.GetDataSetByName('Range').GetValues)];
-           end
-           obj.Name = Name;
-           obj.AERTimes = AERTimes;
-           obj.Az = Az;
-           obj.El = El;
-           % save to file
-           if nargin == 3
-               T = table(Name,AERTimes,Az,El,Range);
-               writetable(T,filename)
-           end
+            % 获取AER Access
+            % Args:
+            %   - timeStep<int>: 仿真步长，单位：秒
+            %   - [filename<char>]: 可选参数，保存文件名，如果传入文件名则保存到指定文件
+            % Returns: 五组返回值index一一对应，应一起循环！
+            %   - Name<cell char>: access A to B 名字，
+            %   - AERTimes<cell char>: 访问时间
+            %   - Az<cell double>: 方位角
+            %   - El<cell double>: 俯仰角
+            %   - Range<cell double>: 距离
+            chain = obj.getChain(); 
+            if isnan(chain)
+                disp('No chain found in scenario!')
+                return 
+            end
+            chain.ClearAccess();
+            chain.ComputeAccess();
+            accessAER = chain.DataProviders.Item('Access AER Data').Exec(obj.root.CurrentScenario.StartTime, obj.root.CurrentScenario.StopTime,timeStep);
+            % 为了拼接,先得有头
+            Name = cell2mat(accessAER.Interval.Item(cast(0,'int32')).DataSets.GetDataSetByName('Strand Name').GetValues);
+            AERTimes = cell2mat(accessAER.Interval.Item(cast(0,'int32')).DataSets.GetDataSetByName('Time').GetValues);
+            Az = cell2mat(accessAER.Interval.Item(cast(0,'int32')).DataSets.GetDataSetByName('Azimuth').GetValues);
+            El = cell2mat(accessAER.Interval.Item(cast(0,'int32')).DataSets.GetDataSetByName('Elevation').GetValues);
+            Range = cell2mat(accessAER.Interval.Item(cast(0,'int32')).DataSets.GetDataSetByName('Range').GetValues);
+            for i = 1:1:accessAER.Interval.Count-1
+                Name = [Name; cell2mat(accessAER.Interval.Item(cast(i,'int32')).DataSets.GetDataSetByName('Strand Name').GetValues)];
+                AERTimes = [AERTimes; cell2mat(accessAER.Interval.Item(cast(i,'int32')).DataSets.GetDataSetByName('Time').GetValues)];
+                Az = [Az; cell2mat(accessAER.Interval.Item(cast(i,'int32')).DataSets.GetDataSetByName('Azimuth').GetValues)];
+                El = [El; cell2mat(accessAER.Interval.Item(cast(i,'int32')).DataSets.GetDataSetByName('Elevation').GetValues)];
+                Range = [Range; cell2mat(accessAER.Interval.Item(cast(i,'int32')).DataSets.GetDataSetByName('Range').GetValues)];
+            end
+            obj.Name = Name;
+            obj.AERTimes = AERTimes;
+            obj.Az = Az;
+            obj.El = El;
+            % save to file
+            if nargin == 3
+                T = table(Name,AERTimes,Az,El,Range);
+                writetable(T,filename)
+            end
         end
     end
-
 end
 

@@ -125,11 +125,19 @@ function pb_test_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 global scenario
-% scenario.animationReset();
-scenario.removeAll();
-scenario.insertMissileByEFile('FXQ',55280, 'gj/1.e');
-% allObj = scenario.getAllObj()
-% scenario.removeByPath('/Application/STK/Scenario/Scenario/Satellite/sat1')
+list = scenario.getAllObjWithChildren();
+disp(list')
+scenario.removeByPath('/Application/STK/Scenario/Scenario/Constellation/asd')
+scenario.removeByPath('/Application/STK/Scenario/Scenario/Constellation/a')
+objs = {'/Application/STK/Scenario/Scenario/Satellite/S5/Sensor/Sensor';
+    '/Application/STK/Scenario/Scenario/Satellite/S4/Sensor/Sensor';
+    '/Application/STK/Scenario/Scenario/Satellite/S3/Sensor/Sensor';
+    '/Application/STK/Scenario/Scenario/Satellite/S2/Sensor/Sensor';
+    '/Application/STK/Scenario/Scenario/Satellite/S1/Sensor/Sensor';
+    '/Application/STK/Scenario/Scenario/Satellite/ck/Sensor/Sensor';
+    };
+scenario.newConstellation('a', objs)
+
 
 
 
