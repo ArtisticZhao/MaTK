@@ -8,7 +8,10 @@ STK custom APP based on Matlab
 - [x] 添加missile
 - [x] 播放仿真动画
 - [x] 播放仿真动画的时间控制
+- [x] 动画速度控制
 - [x] 添加地面站
-- [ ] 显示地面站波束角
-- [ ] Access reports
-- [ ] 链路预算
+- [x] Access reports
+- [x] 链路预算
+- [ ] 添加圆锥传感器
+- [ ] 添加chain
+- [ ] 对象树

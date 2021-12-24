@@ -126,7 +126,7 @@ function pb_test_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 global scenario
 
-scenario.animationReset()
+scenario.animationSlower()
 
 
 

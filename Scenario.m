@@ -75,6 +75,14 @@ classdef Scenario < handle
         function animationReset(obj)
             obj.root.Rewind(); 
         end
+        
+        function animationFaster(obj)
+            obj.root.Faster();
+        end
+        
+        function animationSlower(obj)
+            obj.root.Slower();
+        end
 
         function animationSetCurrentTime(obj, time)
             % 将仿真跳转到指定时间
