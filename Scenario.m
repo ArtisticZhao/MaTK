@@ -132,6 +132,8 @@ classdef Scenario < handle
             % 以下两行隐藏了3D图中的地面轨道投影
             satellite.VO.Pass.TrackData.PassData.GroundTrack.SetLeadDataType('eDataNone');
             satellite.VO.Pass.TrackData.PassData.GroundTrack.SetTrailDataType('eDataNone');
+            % 添加传感器
+            obj.attachSensor(satellite, 'SA', 55);
         end
 
         function insertMissileByEFile(obj, name, color, path_of_e)
@@ -149,6 +151,30 @@ classdef Scenario < handle
             % 以下两行隐藏了3D图中的地面轨道投影
             missile.VO.Trajectory.TrackData.PassData.GroundTrack.SetLeadDataType('eDataNone');
             missile.VO.Trajectory.TrackData.PassData.GroundTrack.SetTrailDataType('eDataNone');
+            % 添加传感器
+            obj.attachSensor(missile, 'SA', 45, 90, 50);
+            obj.attachSensor(missile, 'SB', 45, -90, 50);
+        end
+        
+        function attachSensor(obj, father, name, coneHalfAngle, Az, El)
+            % Args:  1. father: 父类对象, 如sat或missile
+            %        2. name:   名称
+            %        3. coneHalfAngle: 圆锥传感器半锥角
+            %        4. [Az]: 可选, 传感器位置，方位角
+            %        5. [El]: 可选, 传感器位置，底部高度
+            sensor = father.Children.New('eSensor', name);
+            % 定义简单圆锥角传感器, 需要两个参数:
+            % Args: 1.ConeAngle: 参数为锥角
+            %       2.AngularResolution: Angular separation between points
+            %       in a pattern. 为角分辨率
+            % Angular separation between points in a pattern 
+            sensor.CommonTasks.SetPatternSimpleConic(coneHalfAngle, 0.1);  
+            if nargin == 6
+                % 定义传感器指向
+                sensor.CommonTasks.SetPointingFixedAzEl(Az,El,'eAzElAboutBoresightRotate');
+                % 修改指向空间的长度
+                sensor.VO.SpaceProjection = 500;
+            end
         end
 
         function insertFacilityByGeo(obj, name, color, latitude, longitude, altitude)

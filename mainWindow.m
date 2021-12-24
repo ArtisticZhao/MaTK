@@ -125,8 +125,11 @@ function pb_test_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 global scenario
-allObj = scenario.getAllObj()
-scenario.removeByPath('/Application/STK/Scenario/Scenario/Satellite/S5')
+% scenario.animationReset();
+scenario.removeAll();
+scenario.insertMissileByEFile('FXQ',55280, 'gj/1.e');
+% allObj = scenario.getAllObj()
+% scenario.removeByPath('/Application/STK/Scenario/Scenario/Satellite/sat1')
 
 
 
