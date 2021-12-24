@@ -171,6 +171,23 @@ classdef Scenario < handle
 %             azelMask.RangeColorVisible = true;
 %             azelMask.RangeColor = color; % cyan
         end
+        
+        function dict=getAllObj(obj)
+            dict = struct();
+            scenario_objs =  obj.root.CurrentScenario.Children;
+            for i = 0: scenario_objs.Count - 1
+                dict.(scenario_objs.Item(cast(i,'int32')).InstanceName) = scenario_objs.Item(cast(i,'int32')).Path;
+            end
+        end
+        
+        function removeByPath(obj, path)
+            scenario_objs =  obj.root.CurrentScenario.Children;
+            for i = 0: scenario_objs.Count - 1
+                if strcmp(scenario_objs.Item(cast(i,'int32')).Path, path)
+                    scenario_objs.Item(cast(i,'int32')).Unload();
+                end
+            end
+        end
 
         function removeAll(obj)
            scenario_objs =  obj.root.CurrentScenario.Children;

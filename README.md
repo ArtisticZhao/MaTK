@@ -14,4 +14,4 @@ STK custom APP based on Matlab
 - [x] 链路预算
 - [ ] 添加圆锥传感器
 - [ ] 添加chain
-- [ ] 对象树
+- [x] 对象树和对象删除
