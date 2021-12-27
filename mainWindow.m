@@ -120,7 +120,7 @@ scenario.insertSatByOrbitalElements('S3', 65280, 7215.65, 0, 60, 72, 0, 123);
 scenario.insertSatByOrbitalElements('S4', 65280, 7215.65, 0, 60, 72, 0, 113);
 scenario.insertSatByOrbitalElements('S5', 65280, 7215.65, 0, 60, 64, 0, 63);
 scenario.insertSatByOrbitalElements('ck', 65280, 7215.65, 0, 60, 64, 0, 110);
-scenario.insertMissileByEFile('FXQ',55280, 'gj/1.e');
+scenario.insertMissileByEFile('FXQ',55280, 'gj/1.e', 'gj/X47B_UCAV_Cert_v48.mdl');
 scenario.insertFacilityByGeo('Xiamen', 16776960, 24.4798, 118.082, 0);
 % Const_Sat
 objs = {'/Application/STK/Scenario/Scenario/Satellite/S5/Sensor/Sensor';
@@ -152,5 +152,5 @@ global scenario
 scenario.getAllObj()
 scenario.root.ExecuteCommand('VO * Annotation Time Show Off ShowTimeStep Off');
 scenario.root.ExecuteCommand('VO * Annotation Frame Show On');
-scenario.zoom_to('Satellite/S5', 1);
+scenario.zoom_to('Missile/FXQ', 1);
 

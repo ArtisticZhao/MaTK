@@ -165,12 +165,13 @@ classdef Scenario < handle
             obj.attachSensor(satellite, 'Sensor', 55);
         end
 
-        function insertMissileByEFile(obj, name, color, path_of_e)
+        function insertMissileByEFile(obj, name, color, path_of_e, modelPath)
             % 根据e文件路径添加missile
             % Args:
             %   - name <char>: 名字
             %   - color <int>: 颜色
             %   - path_of_e <char>: e文件路径
+            %   - [modelPath <char>]: 可选，模型路径
             missile = obj.root.CurrentScenario.Children.New('eMissile',name);
             missile.SetTrajectoryType('ePropagatorStkExternal');   % 设置外部文件
             % 设置轨道颜色
@@ -188,6 +189,12 @@ classdef Scenario < handle
             % 添加传感器
             obj.attachSensor(missile, 'SA', 45, 90, 50);
             obj.attachSensor(missile, 'SB', 45, -90, 50);
+            % 设置飞行器模型
+            if nargin == 5
+                model = missile.VO.Model;
+                model.Visible = true; 
+                model.ModelData.Filename  = modelPath;
+            end
         end
         
         function attachSensor(obj, father, name, coneHalfAngle, Az, El)
