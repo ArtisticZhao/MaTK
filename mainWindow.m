@@ -152,5 +152,5 @@ global scenario
 scenario.getAllObj()
 scenario.root.ExecuteCommand('VO * Annotation Time Show Off ShowTimeStep Off');
 scenario.root.ExecuteCommand('VO * Annotation Frame Show On');
-scenario.zoom_to('Satellite/S5');
+scenario.zoom_to('Satellite/S5', 1);
 

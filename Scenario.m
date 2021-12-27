@@ -113,12 +113,13 @@ classdef Scenario < handle
             current_time = obj.root.CurrentTime;
         end
         
-        function zoom_to(obj, target)
+        function zoom_to(obj, target, id)
            % 在3D视图中缩放到指定目标
            % Args:
            %   - target<char>: e.g. 'Satellite/ck'
-           cmd = 'VO * View FromTo FromRegName "STK Object" FromName "%s" ToRegName "STK Object" ToName "%s"';
-           cmd = sprintf(cmd, target, target);
+           %   - id<int>: windows id
+           cmd = 'VO * View FromTo FromRegName "STK Object" FromName "%s" ToRegName "STK Object" ToName "%s" WindowID %d';
+           cmd = sprintf(cmd, target, target, id);
            obj.root.ExecuteCommand(cmd);
            % X夹角  Y夹角  距离 m
            obj.root.ExecuteCommand('VO * ViewerPosition 30 0 30');
