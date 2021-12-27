@@ -197,6 +197,14 @@ classdef Scenario < handle
             end
         end
         
+        function missileSetAttitude(obj, missile, roll, pitch, yaw)
+            missile.SetAttitudeType('eAttitudeStandard');
+            standard = missile.Attitude;
+            standard.Basic.SetProfileType('eProfileFixedInAxes'); 
+            interfix = standard.Basic.Profile
+            interfix.Orientation.AssignYPRAngles('eYPR', yaw, pitch, roll); 
+        end
+        
         function attachSensor(obj, father, name, coneHalfAngle, Az, El)
             % 为目标添加传感器
             % Args:  
@@ -245,6 +253,21 @@ classdef Scenario < handle
 %             azelMask.DisplayRangeMaximum = 100;  % km
 %             azelMask.RangeColorVisible = true;
 %             azelMask.RangeColor = color; % cyan
+        end
+        
+        function object=getByPath(obj, path)
+            % 根据输入的path, 获取相应的对象
+            % Args:
+            %   - path <char>: STK path
+            % Returns:
+            %   - object <StkObject>: STK对象
+            scenario_objs =  obj.root.CurrentScenario.Children;
+            for i = 0: scenario_objs.Count - 1
+                if strcmp(scenario_objs.Item(cast(i,'int32')).Path, path)
+                    object = scenario_objs.Item(cast(i,'int32'));
+                    return
+                end
+            end
         end
         
         function dict=getAllObj(obj)

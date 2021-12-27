@@ -150,7 +150,7 @@ function pb_test_Callback(hObject, eventdata, handles)
 global scenario
 % scenario.root.ExecuteCommand('Zoom * Object */Facility/Xiamen 20.0');
 scenario.getAllObj()
-scenario.root.ExecuteCommand('VO * Annotation Time Show Off ShowTimeStep Off');
-scenario.root.ExecuteCommand('VO * Annotation Frame Show On');
 scenario.zoom_to('Missile/FXQ', 1);
+scenario.missileSetAttitude(scenario.getByPath('/Application/STK/Scenario/Scenario/Missile/FXQ'), 30, 90, 180)
+
 
