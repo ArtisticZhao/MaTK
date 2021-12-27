@@ -198,10 +198,16 @@ classdef Scenario < handle
         end
         
         function missileSetAttitude(obj, missile, roll, pitch, yaw)
+            % ÐÞ¸Ämissile×ËÌ¬
+            % Args:
+            %   - missile <IAgMissile>: STKµ¼µ¯¶ÔÏó
+            %   - roll <double>: ºá¹ö½Ç
+            %   - pitch <double>: ¸©Ñö½Ç
+            %   - yaw <double>: ·½Î»
             missile.SetAttitudeType('eAttitudeStandard');
             standard = missile.Attitude;
             standard.Basic.SetProfileType('eProfileFixedInAxes'); 
-            interfix = standard.Basic.Profile
+            interfix = standard.Basic.Profile;
             interfix.Orientation.AssignYPRAngles('eYPR', yaw, pitch, roll); 
         end
         
