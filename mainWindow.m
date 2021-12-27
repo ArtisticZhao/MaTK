@@ -114,21 +114,15 @@ global scenario
 scenario.setPeriod('1 Jul 2007 12:00:00.000', '1 Jul 2007 17:00:00.000');
 scenario.removeAll();
 % (obj, name, color, semimajor_axis_km, eccentricity, inclination_deg, RANN, argument_of_perigee_deg, ture_anomaly_deg)
-scenario.insertSatByOrbitalElements('sat1', 65280, 7215.65, 0, 60, 181, 0, 50);
+scenario.insertSatByOrbitalElements('S1', 65280, 7215.65, 2.86383e-16, 60, 57, 0, 135);
+scenario.insertSatByOrbitalElements('S2', 65280, 7215.65, 0, 60, 57, 0, 120);
+scenario.insertSatByOrbitalElements('S3', 65280, 7215.65, 0, 60, 72, 0, 123);
+scenario.insertSatByOrbitalElements('S4', 65280, 7215.65, 0, 60, 72, 0, 113);
+scenario.insertSatByOrbitalElements('S5', 65280, 7215.65, 0, 60, 64, 0, 63);
+scenario.insertSatByOrbitalElements('ck', 65280, 7215.65, 0, 60, 64, 0, 110);
 scenario.insertMissileByEFile('FXQ',55280, 'gj/1.e');
-scenario.insertFacilityByGeo('Taiyuan', 16776960, 38.84, 111.61, 1.452);
-
-
-% --- Executes on button press in pb_test.
-function pb_test_Callback(hObject, eventdata, handles)
-% hObject    handle to pb_test (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-global scenario
-list = scenario.getAllObjWithChildren();
-disp(list')
-scenario.removeByPath('/Application/STK/Scenario/Scenario/Constellation/asd')
-scenario.removeByPath('/Application/STK/Scenario/Scenario/Constellation/a')
+scenario.insertFacilityByGeo('Xiamen', 16776960, 24.4798, 118.082, 0);
+% Const_Sat
 objs = {'/Application/STK/Scenario/Scenario/Satellite/S5/Sensor/Sensor';
     '/Application/STK/Scenario/Scenario/Satellite/S4/Sensor/Sensor';
     '/Application/STK/Scenario/Scenario/Satellite/S3/Sensor/Sensor';
@@ -136,7 +130,26 @@ objs = {'/Application/STK/Scenario/Scenario/Satellite/S5/Sensor/Sensor';
     '/Application/STK/Scenario/Scenario/Satellite/S1/Sensor/Sensor';
     '/Application/STK/Scenario/Scenario/Satellite/ck/Sensor/Sensor';
     };
-scenario.newConstellation('a', objs)
+scenario.newConstellation('Const_Sat', objs)
+% Const_M
+objs = {'/Application/STK/Scenario/Scenario/Missile/FXQ/Sensor/SA';
+    '/Application/STK/Scenario/Scenario/Missile/FXQ/Sensor/SB';
+    };
+scenario.newConstellation('Const_M', objs)
+% Chain
+objs = {'/Application/STK/Scenario/Scenario/Constellation/Const_Sat';
+    '/Application/STK/Scenario/Scenario/Constellation/Const_M';
+    };
+scenario.newChain('Chain', objs);
+
+% --- Executes on button press in pb_test.
+function pb_test_Callback(hObject, eventdata, handles)
+% hObject    handle to pb_test (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+global scenario
+
+scenario.accessAER(60)
 
 
 

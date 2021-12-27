@@ -144,7 +144,7 @@ classdef Scenario < handle
             satellite.VO.Pass.TrackData.PassData.GroundTrack.SetLeadDataType('eDataNone');
             satellite.VO.Pass.TrackData.PassData.GroundTrack.SetTrailDataType('eDataNone');
             % Ìí¼Ó´«¸ÐÆ÷
-            obj.attachSensor(satellite, 'SA', 55);
+            obj.attachSensor(satellite, 'Sensor', 55);
         end
 
         function insertMissileByEFile(obj, name, color, path_of_e)
@@ -352,10 +352,10 @@ classdef Scenario < handle
             %   - El<cell double>: ¸©Ñö½Ç
             %   - Range<cell double>: ¾àÀë
             chain = obj.getChain(); 
-            if isnan(chain)
-                disp('No chain found in scenario!')
-                return 
-            end
+%             if isnan(chain)
+%                 disp('No chain found in scenario!')
+%                 return 
+%             end
             chain.ClearAccess();
             chain.ComputeAccess();
             accessAER = chain.DataProviders.Item('Access AER Data').Exec(obj.root.CurrentScenario.StartTime, obj.root.CurrentScenario.StopTime,timeStep);
