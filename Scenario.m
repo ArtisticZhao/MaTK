@@ -32,6 +32,9 @@ classdef Scenario < handle
             % close old scenario
             obj.root.CloseScenario;
             obj.root.NewScenario(scenarioName);
+            % 关闭左下角调试信息
+            obj.root.ExecuteCommand('VO * Annotation Time Show Off ShowTimeStep Off');
+            obj.root.ExecuteCommand('VO * Annotation Frame Show Off');
         end
         
         function loadScenario(obj, scenarioPath)
@@ -41,6 +44,9 @@ classdef Scenario < handle
             % close old scenario
             obj.root.CloseScenario;
             obj.root.LoadScenario(scenarioPath)
+            % 关闭左下角调试信息
+            obj.root.ExecuteCommand('VO * Annotation Time Show Off ShowTimeStep Off');
+            obj.root.ExecuteCommand('VO * Annotation Frame Show Off');
         end
        
         function setPeriod(obj, start_time, stop_time)
@@ -105,6 +111,17 @@ classdef Scenario < handle
             %   - current_time <double>: 是当前时刻减去obj.root.CurrentScenario.Epoch 的seconds数,
             %                            通常 Epoch = StartTime
             current_time = obj.root.CurrentTime;
+        end
+        
+        function zoom_to(obj, target)
+           % 在3D视图中缩放到指定目标
+           % Args:
+           %   - target<char>: e.g. 'Satellite/ck'
+           cmd = 'VO * View FromTo FromRegName "STK Object" FromName "%s" ToRegName "STK Object" ToName "%s"';
+           cmd = sprintf(cmd, target, target);
+           obj.root.ExecuteCommand(cmd);
+           % X夹角  Y夹角  距离 m
+           obj.root.ExecuteCommand('VO * ViewerPosition 30 0 30');
         end
 
         %% 添加/删除对象: Satellite Missile Sensor Facility

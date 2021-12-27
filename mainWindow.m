@@ -148,11 +148,9 @@ function pb_test_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 global scenario
-
-scenario.accessAER(60)
-
-
-
-
-
+% scenario.root.ExecuteCommand('Zoom * Object */Facility/Xiamen 20.0');
+scenario.getAllObj()
+scenario.root.ExecuteCommand('VO * Annotation Time Show Off ShowTimeStep Off');
+scenario.root.ExecuteCommand('VO * Annotation Frame Show On');
+scenario.zoom_to('Satellite/S5');
 
