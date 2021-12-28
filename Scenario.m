@@ -211,6 +211,26 @@ classdef Scenario < handle
             interfix.Orientation.AssignYPRAngles('eYPR', yaw, pitch, roll); 
         end
         
+        function [latitude, longitude, altitude]=missileGetLLA(obj, path)
+            % 获取当前missile的经纬度海拔位置信息
+            % Args:
+            %   - path: STK path
+            % Returns:
+            %   - latitude<double>: 精度
+            %   - longitude<double>: 纬度
+            %   - altitude<double>: 海拔 (m)
+            cmd = 'Position %s';
+            cmd = sprintf(cmd, path);
+            res = obj.root.ExecuteCommand(cmd);
+            if res.Count == 1
+               res = res.Item(cast(0, 'int32'));
+            end
+            C = strsplit(res, ' ');
+            latitude = C(1);
+            longitude = C(2);
+            altitude = C(3);
+        end
+        
         function attachSensor(obj, father, name, coneHalfAngle, Az, El)
             % 为目标添加传感器
             % Args:  

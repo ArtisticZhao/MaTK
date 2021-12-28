@@ -149,8 +149,7 @@ function pb_test_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 global scenario
 % scenario.root.ExecuteCommand('Zoom * Object */Facility/Xiamen 20.0');
-scenario.getAllObj()
-scenario.zoom_to('Missile/FXQ', 1);
-scenario.missileSetAttitude(scenario.getByPath('/Application/STK/Scenario/Scenario/Missile/FXQ'), 30, 90, 180)
+[latitude, longitude, altitude]=scenario.missileGetLLA('/Application/STK/Scenario/Scenario/Missile/FXQ')
+
 
 
