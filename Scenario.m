@@ -44,6 +44,9 @@ classdef Scenario < handle
             % close old scenario
             obj.root.CloseScenario;
             obj.root.LoadScenario(scenarioPath)
+            % Update properties
+            obj.getStartTime();
+            obj.getStopTime();
             % 关闭左下角调试信息
             obj.root.ExecuteCommand('VO * Annotation Time Show Off ShowTimeStep Off');
             obj.root.ExecuteCommand('VO * Annotation Frame Show Off');
@@ -63,10 +66,12 @@ classdef Scenario < handle
         
         function start_time=getStartTime(obj)
             start_time = obj.root.CurrentScenario.StartTime;
+            obj.start_time = datetime(start_time,'InputFormat','dd MMM yyyy HH:mm:ss.SSS', 'local', 'en_US');
         end
         
         function stop_time=getStopTime(obj)
             stop_time = obj.root.CurrentScenario.StopTime;
+            obj.stop_time = datetime(stop_time,'InputFormat','dd MMM yyyy HH:mm:ss.SSS', 'local', 'en_US');
         end
 
         %% 动画设置
@@ -110,7 +115,10 @@ classdef Scenario < handle
             % Returns:
             %   - current_time <double>: 是当前时刻减去obj.root.CurrentScenario.Epoch 的seconds数,
             %                            通常 Epoch = StartTime
-            current_time = obj.root.CurrentTime;
+            current_time_sec = obj.root.CurrentTime;
+            obj.getStartTime();
+            current_time = obj.start_time + seconds(current_time_sec);
+            current_time = datetime(current_time,'Format','dd MMM yyyy HH:mm:ss.SSS', 'Locale', 'en_US');
         end
         
         function zoom_to(obj, target, id)

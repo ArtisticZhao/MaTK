@@ -149,7 +149,8 @@ function pb_test_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 global scenario
 % scenario.root.ExecuteCommand('Zoom * Object */Facility/Xiamen 20.0');
-[latitude, longitude, altitude]=scenario.missileGetLLA('/Application/STK/Scenario/Scenario/Missile/FXQ')
-
+% [latitude, longitude, altitude]=scenario.missileGetLLA('/Application/STK/Scenario/Scenario/Missile/FXQ')
+ scenario.root.ExecuteCommand('VO * Annotation Time Show On ShowTimeStep Off');
+scenario.getCurrentTime()
 
 
