@@ -173,7 +173,7 @@ classdef Scenario < handle
             obj.attachSensor(satellite, 'Sensor', 55);
         end
 
-        function insertMissileByEFile(obj, name, color, path_of_e, modelPath)
+        function insertMissileByEFile(obj, name, color, path_of_e, modelPath, attitudePath)
             % 根据e文件路径添加missile
             % Args:
             %   - name <char>: 名字
@@ -198,10 +198,14 @@ classdef Scenario < handle
             obj.attachSensor(missile, 'SA', 45, 90, 50);
             obj.attachSensor(missile, 'SB', 45, -90, 50);
             % 设置飞行器模型
-            if nargin == 5
+            if nargin >= 5
                 model = missile.VO.Model;
                 model.Visible = true; 
                 model.ModelData.Filename  = modelPath;
+                if nargin == 6
+                    ex = missile.Attitude.External;
+                    ex.Load(attitudePath)
+                end
             end
         end
         
