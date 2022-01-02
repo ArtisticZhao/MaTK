@@ -101,8 +101,8 @@ function pb_newScenario_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 global scenario
-% scenario.newAndConfigScenario('Test');
-scenario.loadScenario('C:\\Users\\lilacsat\\Documents\\STK 11 (x64)\\test1\\Scenario.sc');
+scenario.newAndConfigScenario('Test');
+% scenario.loadScenario('C:\\Users\\lilacsat\\Documents\\STK 11 (x64)\\test1\\Scenario.sc');
 
 
 % --- Executes on button press in pb_add_sat.
@@ -122,25 +122,29 @@ scenario.insertSatByOrbitalElements('S5', 65280, 7215.65, 0, 60, 64, 0, 63);
 scenario.insertSatByOrbitalElements('ck', 65280, 7215.65, 0, 60, 64, 0, 110);
 scenario.insertMissileByEFile('FXQ',55280, 'gj/1.e', 'gj/X47B_UCAV_Cert_v48.mdl');
 scenario.insertFacilityByGeo('Xiamen', 16776960, 24.4798, 118.082, 0);
+scenario.insertFacilityByGeo('Taiyuan', 16776960, 38.84, 111.61, 1.452);
 % Const_Sat
-objs = {'/Application/STK/Scenario/Scenario/Satellite/S5/Sensor/Sensor';
-    '/Application/STK/Scenario/Scenario/Satellite/S4/Sensor/Sensor';
-    '/Application/STK/Scenario/Scenario/Satellite/S3/Sensor/Sensor';
-    '/Application/STK/Scenario/Scenario/Satellite/S2/Sensor/Sensor';
-    '/Application/STK/Scenario/Scenario/Satellite/S1/Sensor/Sensor';
-    '/Application/STK/Scenario/Scenario/Satellite/ck/Sensor/Sensor';
+objs = {'/Application/STK/Scenario/Test/Satellite/S5/Sensor/Sensor';
+    '/Application/STK/Scenario/Test/Satellite/S4/Sensor/Sensor';
+    '/Application/STK/Scenario/Test/Satellite/S3/Sensor/Sensor';
+    '/Application/STK/Scenario/Test/Satellite/S2/Sensor/Sensor';
+    '/Application/STK/Scenario/Test/Satellite/S1/Sensor/Sensor';
+    '/Application/STK/Scenario/Test/Satellite/ck/Sensor/Sensor';
     };
 scenario.newConstellation('Const_Sat', objs)
 % Const_M
-objs = {'/Application/STK/Scenario/Scenario/Missile/FXQ/Sensor/SA';
-    '/Application/STK/Scenario/Scenario/Missile/FXQ/Sensor/SB';
+objs = {'/Application/STK/Scenario/Test/Missile/FXQ/Sensor/SA';
+    '/Application/STK/Scenario/Test/Missile/FXQ/Sensor/SB';
     };
 scenario.newConstellation('Const_M', objs)
 % Chain
-objs = {'/Application/STK/Scenario/Scenario/Constellation/Const_Sat';
-    '/Application/STK/Scenario/Scenario/Constellation/Const_M';
+objs = {
+    '/Application/STK/Scenario/Test/Constellation/Const_M';    
+    '/Application/STK/Scenario/Test/Constellation/Const_Sat';
+    '/Application/STK/Scenario/Test/Facility/Taiyuan';
     };
 scenario.newChain('Chain', objs);
+scenario.accessAER(60);
 
 % --- Executes on button press in pb_test.
 function pb_test_Callback(hObject, eventdata, handles)
@@ -150,7 +154,10 @@ function pb_test_Callback(hObject, eventdata, handles)
 global scenario
 % scenario.root.ExecuteCommand('Zoom * Object */Facility/Xiamen 20.0');
 % [latitude, longitude, altitude]=scenario.missileGetLLA('/Application/STK/Scenario/Scenario/Missile/FXQ')
- scenario.root.ExecuteCommand('VO * Annotation Time Show On ShowTimeStep Off');
-scenario.getCurrentTime()
-
+%  scenario.root.ExecuteCommand('VO * Annotation Time Show On ShowTimeStep Off');
+% scenario.getCurrentTime()
+res = scenario.getAllObjWithChildren();
+disp(res')
+% scenario.animationSlower();
+scenario.animationReset();
 

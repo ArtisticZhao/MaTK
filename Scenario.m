@@ -441,20 +441,25 @@ classdef Scenario < handle
             chain.ClearAccess();
             chain.ComputeAccess();
             accessAER = chain.DataProviders.Item('Access AER Data').Exec(obj.root.CurrentScenario.StartTime, obj.root.CurrentScenario.StopTime,timeStep);
+            if accessAER.Interval.Count == 0
+               return 
+            end
             % 为了拼接,先得有头
-            Name = cell2mat(accessAER.Interval.Item(cast(0,'int32')).DataSets.GetDataSetByName('Strand Name').GetValues);
+            Name = accessAER.Interval.Item(cast(0,'int32')).DataSets.GetDataSetByName('Strand Name').GetValues;
             AERTimes = cell2mat(accessAER.Interval.Item(cast(0,'int32')).DataSets.GetDataSetByName('Time').GetValues);
             Az = cell2mat(accessAER.Interval.Item(cast(0,'int32')).DataSets.GetDataSetByName('Azimuth').GetValues);
             El = cell2mat(accessAER.Interval.Item(cast(0,'int32')).DataSets.GetDataSetByName('Elevation').GetValues);
             Range = cell2mat(accessAER.Interval.Item(cast(0,'int32')).DataSets.GetDataSetByName('Range').GetValues);
             for i = 1:1:accessAER.Interval.Count-1
-                Name = [Name; cell2mat(accessAER.Interval.Item(cast(i,'int32')).DataSets.GetDataSetByName('Strand Name').GetValues)];
+                tempName = accessAER.Interval.Item(cast(i,'int32')).DataSets.GetDataSetByName('Strand Name').GetValues;
+                Name = [Name; tempName];
                 AERTimes = [AERTimes; cell2mat(accessAER.Interval.Item(cast(i,'int32')).DataSets.GetDataSetByName('Time').GetValues)];
                 Az = [Az; cell2mat(accessAER.Interval.Item(cast(i,'int32')).DataSets.GetDataSetByName('Azimuth').GetValues)];
                 El = [El; cell2mat(accessAER.Interval.Item(cast(i,'int32')).DataSets.GetDataSetByName('Elevation').GetValues)];
                 Range = [Range; cell2mat(accessAER.Interval.Item(cast(i,'int32')).DataSets.GetDataSetByName('Range').GetValues)];
             end
             obj.Name = Name;
+            disp(Name)
             obj.AERTimes = AERTimes;
             obj.Az = Az;
             obj.El = El;
