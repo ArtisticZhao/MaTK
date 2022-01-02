@@ -394,6 +394,7 @@ classdef Scenario < handle
             for i=1:size(objects)
                 chain.Objects.Add(char(objects(i)));
             end
+            chain.Graphics.Animation.IsDirectionVisible = true;
         end
         
         function chain=getChain(obj, path)
@@ -459,7 +460,6 @@ classdef Scenario < handle
                 Range = [Range; cell2mat(accessAER.Interval.Item(cast(i,'int32')).DataSets.GetDataSetByName('Range').GetValues)];
             end
             obj.Name = Name;
-            disp(Name)
             obj.AERTimes = AERTimes;
             obj.Az = Az;
             obj.El = El;
