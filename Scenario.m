@@ -346,10 +346,20 @@ classdef Scenario < handle
         function removeByPath(obj, path)
             % 根据STKpath删除目标
             % Args: 
-            %   - path: e.g.  '/Application/STK/Scenario/Scenario/Missile/FXQ/Sensor/SA'
+            %   - path: e.g.  '/Application/STK/Scenario/Scenario/Missile/FXQ'
+            %                 or 'Missile/FXQ'
             scenario_objs =  obj.root.CurrentScenario.Children;
+            pattern = sprintf('%s$', path);
             for i = 0: scenario_objs.Count - 1
                 if strcmp(scenario_objs.Item(cast(i,'int32')).Path, path)
+                    disp(sprintf('%s removed!', scenario_objs.Item(cast(i,'int32')).Path))
+                    scenario_objs.Item(cast(i,'int32')).Unload();
+                    return
+                end
+                % 短path匹配
+                res = regexp(scenario_objs.Item(cast(i,'int32')).Path, pattern, 'match');
+                if ~isempty(res)
+                    disp(sprintf('%s removed!', scenario_objs.Item(cast(i,'int32')).Path))
                     scenario_objs.Item(cast(i,'int32')).Unload();
                     return
                 end
@@ -386,7 +396,7 @@ classdef Scenario < handle
             for i=1:size(objects)
                 constellation.Objects.Add(char(objects(i)));
             end
-            disp(['Add ' num2str(constellation.Objects.Count) ' item(s) to Constellation!'])
+            disp(['Add ' num2str(constellation.Objects.Count) ' item(s) to ' constellation.InstanceName '!'])
         end
         
         function newChain(obj, name, objects)
@@ -399,6 +409,7 @@ classdef Scenario < handle
                 chain.Objects.Add(char(objects(i)));
             end
             chain.Graphics.Animation.IsDirectionVisible = true;
+            disp(['Add ' num2str(chain.Objects.Count) ' item(s) to ' chain.InstanceName '!'])
         end
         
         function chain=getChain(obj, path)
