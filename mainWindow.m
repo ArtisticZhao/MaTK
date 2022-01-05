@@ -120,7 +120,7 @@ scenario.insertSatByOrbitalElements('S3', 65280, 7215.65, 0, 60, 72, 0, 123);
 scenario.insertSatByOrbitalElements('S4', 65280, 7215.65, 0, 60, 72, 0, 113);
 scenario.insertSatByOrbitalElements('S5', 65280, 7215.65, 0, 60, 64, 0, 63);
 scenario.insertSatByOrbitalElements('ck', 65280, 7215.65, 0, 60, 64, 0, 110);
-scenario.insertMissileByEFile('FXQ',55280, 'gj/1.e', 'gj/X47B_UCAV_Cert_v48.mdl', 'gj/zt.a',[45, 90, 50; 45, -90, 50]);
+scenario.insertMissileByEFile('FXQ',55280, 'gj/1.e', 'gj/X47B_UCAV_Cert_v48.mdl', '',[45, 90, 50; 45, -90, 50]);
 scenario.insertFacilityByGeo('Xiamen', 16776960, 24.4798, 118.082, 0);
 scenario.insertFacilityByGeo('Taiyuan', 16776960, 38.84, 111.61, 1.452);
 % Const_Sat

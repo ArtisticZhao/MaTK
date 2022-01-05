@@ -205,12 +205,16 @@ classdef Scenario < handle
            
             % 设置飞行器模型
             if nargin >= 5
-                model = missile.VO.Model;
-                model.Visible = true; 
-                model.ModelData.Filename  = modelPath;
+                if size(modelPath)
+                    model = missile.VO.Model;
+                    model.Visible = true; 
+                    model.ModelData.Filename  = modelPath;
+                end
                 if nargin >= 6
-                    ex = missile.Attitude.External;
-                    ex.Load(attitudePath)
+                    if size(attitudePath)
+                        ex = missile.Attitude.External;
+                        ex.Load(attitudePath)
+                    end
                 end
                 if nargin >= 7
                    % 根据传感器参数矩阵设置传感器组
