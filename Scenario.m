@@ -134,7 +134,7 @@ classdef Scenario < handle
         end
 
         %% 添加/删除对象: Satellite Missile Sensor Facility
-        function insertSatByOrbitalElements(obj, name, color, semimajor_axis_km, eccentricity, inclination_deg, RANN, argument_of_perigee_deg, ture_anomaly_deg)
+        function insertSatByOrbitalElements(obj, name, color, semimajor_axis_km, eccentricity, inclination_deg, RANN, argument_of_perigee_deg, ture_anomaly_deg, sensor)
             % 根据轨道六根数添加卫星
             % Args:
             %   - name <char>: 名字
@@ -170,10 +170,18 @@ classdef Scenario < handle
             satellite.VO.Pass.TrackData.PassData.GroundTrack.SetLeadDataType('eDataNone');
             satellite.VO.Pass.TrackData.PassData.GroundTrack.SetTrailDataType('eDataNone');
             % 添加传感器
-            obj.attachSensor(satellite, 'Sensor', 55);
+            if nargin == 10
+                % 根据传感器参数矩阵设置传感器组
+                [r,c]=size(sensor); % c = 3, r = 传感器个数
+                for i=1:r
+                    obj.attachSensor(satellite, sprintf('Sensor%d', i), sensor(i,1), sensor(i,2), sensor(i,3));
+                end
+            else
+                obj.attachSensor(satellite, 'Sensor', 55);
+            end
         end
 
-        function insertMissileByEFile(obj, name, color, path_of_e, modelPath, attitudePath)
+        function insertMissileByEFile(obj, name, color, path_of_e, modelPath, attitudePath, sensor)
             % 根据e文件路径添加missile
             % Args:
             %   - name <char>: 名字
@@ -194,19 +202,30 @@ classdef Scenario < handle
             % 以下两行隐藏了3D图中的地面轨道投影
             missile.VO.Trajectory.TrackData.PassData.GroundTrack.SetLeadDataType('eDataNone');
             missile.VO.Trajectory.TrackData.PassData.GroundTrack.SetTrailDataType('eDataNone');
-            % 添加传感器
-            obj.attachSensor(missile, 'SA', 45, 90, 50);
-            obj.attachSensor(missile, 'SB', 45, -90, 50);
+           
             % 设置飞行器模型
             if nargin >= 5
                 model = missile.VO.Model;
                 model.Visible = true; 
                 model.ModelData.Filename  = modelPath;
-                if nargin == 6
+                if nargin >= 6
                     ex = missile.Attitude.External;
                     ex.Load(attitudePath)
                 end
+                if nargin >= 7
+                   % 根据传感器参数矩阵设置传感器组
+                   [r,c]=size(sensor); % c = 3, r = 传感器个数
+                   for i=1:r
+                       obj.attachSensor(missile, sprintf('Sensor%d', i), sensor(i,1), sensor(i,2), sensor(i,3));
+                   end
+                end
             end
+            if nargin <7
+                % 添加默认传感器
+                obj.attachSensor(missile, 'SA', 45, 90, 50);
+                obj.attachSensor(missile, 'SB', 45, -90, 50);
+            end
+            
         end
         
         function missileSetAttitude(obj, missile, roll, pitch, yaw)

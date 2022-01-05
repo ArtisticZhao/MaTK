@@ -114,13 +114,13 @@ global scenario
 scenario.setPeriod('1 Jul 2007 12:00:00.000', '1 Jul 2007 17:00:00.000');
 scenario.removeAll();
 % (obj, name, color, semimajor_axis_km, eccentricity, inclination_deg, RANN, argument_of_perigee_deg, ture_anomaly_deg)
-scenario.insertSatByOrbitalElements('S1', 65280, 7215.65, 2.86383e-16, 60, 57, 0, 135);
+scenario.insertSatByOrbitalElements('S1', 65280, 7215.65, 2.86383e-16, 60, 57, 0, 135, [55,0,0]);
 scenario.insertSatByOrbitalElements('S2', 65280, 7215.65, 0, 60, 57, 0, 120);
 scenario.insertSatByOrbitalElements('S3', 65280, 7215.65, 0, 60, 72, 0, 123);
 scenario.insertSatByOrbitalElements('S4', 65280, 7215.65, 0, 60, 72, 0, 113);
 scenario.insertSatByOrbitalElements('S5', 65280, 7215.65, 0, 60, 64, 0, 63);
 scenario.insertSatByOrbitalElements('ck', 65280, 7215.65, 0, 60, 64, 0, 110);
-scenario.insertMissileByEFile('FXQ',55280, 'gj/1.e', 'gj/X47B_UCAV_Cert_v48.mdl');
+scenario.insertMissileByEFile('FXQ',55280, 'gj/1.e', 'gj/X47B_UCAV_Cert_v48.mdl', 'gj/zt.a',[45, 90, 50; 45, -90, 50]);
 scenario.insertFacilityByGeo('Xiamen', 16776960, 24.4798, 118.082, 0);
 scenario.insertFacilityByGeo('Taiyuan', 16776960, 38.84, 111.61, 1.452);
 % Const_Sat
@@ -128,13 +128,13 @@ objs = {'/Application/STK/Scenario/Test/Satellite/S5/Sensor/Sensor';
     '/Application/STK/Scenario/Test/Satellite/S4/Sensor/Sensor';
     '/Application/STK/Scenario/Test/Satellite/S3/Sensor/Sensor';
     '/Application/STK/Scenario/Test/Satellite/S2/Sensor/Sensor';
-    '/Application/STK/Scenario/Test/Satellite/S1/Sensor/Sensor';
+    '/Application/STK/Scenario/Test/Satellite/S1/Sensor/Sensor1';
     '/Application/STK/Scenario/Test/Satellite/ck/Sensor/Sensor';
     };
 scenario.newConstellation('Const_Sat', objs)
 % Const_M
-objs = {'/Application/STK/Scenario/Test/Missile/FXQ/Sensor/SA';
-    '/Application/STK/Scenario/Test/Missile/FXQ/Sensor/SB';
+objs = {'/Application/STK/Scenario/Test/Missile/FXQ/Sensor/Sensor1';
+    '/Application/STK/Scenario/Test/Missile/FXQ/Sensor/Sensor2';
     };
 scenario.newConstellation('Const_M', objs)
 % Chain
