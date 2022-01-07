@@ -287,6 +287,61 @@ classdef Scenario < handle
                 sensor.VO.SpaceProjection = 500;
             end
         end
+        
+        function sensorShowAlwaysOn(obj, sensorPath)
+            cmd = sprintf('DisplayTimes %s State AlwaysOn', sensorPath);
+            obj.root.ExecuteCommand(cmd);
+        end
+        
+        function sensorShowAlwaysOff(obj, sensorPath)
+            cmd = sprintf('DisplayTimes %s State AlwaysOff', sensorPath);
+            obj.root.ExecuteCommand(cmd);
+        end
+        
+        function sensorShowWhenAccessTo(obj, sensorPath, targetPath)
+            cmd = sprintf('DisplayTimes %s State Access', sensorPath);
+            obj.root.ExecuteCommand(cmd);
+            cmd = sprintf('DisplayTimes %s Access %s', sensorPath, targetPath);
+            obj.root.ExecuteCommand(cmd);
+        end
+        
+        function sensorShowAllOn(obj)
+            list = obj.getAllSensor();
+            for i = 1:length(list)
+               disp(list{i})
+               obj.sensorShowAlwaysOn(char(list{i}));
+            end
+        end
+        
+        function sensorShowAllOff(obj)
+            list = obj.getAllSensor();
+            for i = 1:length(list)
+               disp(list{i})
+               obj.sensorShowAlwaysOff(char(list{i}));
+            end
+        end
+        
+        function sensorShowAccess(obj)
+            allobjs = obj.getAllObjWithChildren();
+            re_missile = '^.*/Missile/.*/Sensor/.*';
+            a = regexp(allobjs, re_missile, 'match');
+            a(cellfun(@isempty,a))=[];  % 去除空值
+            missile_sensor = a;
+            
+            re_sat =  '^.*/Satellite/.*/Sensor/.*';
+            a = regexp(allobjs, re_sat, 'match');
+            a(cellfun(@isempty,a))=[];  % 去除空值
+            sat_sensor = a;
+            
+            for i = 1:length(missile_sensor)
+               for j = 1:length(sat_sensor) 
+                   m_s = char(missile_sensor{i});
+                   s_s = char(sat_sensor{j});
+                   obj.sensorShowWhenAccessTo(m_s, s_s);
+                   obj.sensorShowWhenAccessTo(s_s, m_s);
+               end
+            end
+        end
 
         function insertFacilityByGeo(obj, name, color, latitude, longitude, altitude)
             % 根据经纬度添加设施
@@ -340,6 +395,14 @@ classdef Scenario < handle
             for i = 0: scenario_objs.Count - 1
                 dict.(scenario_objs.Item(cast(i,'int32')).InstanceName) = scenario_objs.Item(cast(i,'int32')).Path;
             end
+        end
+        
+        function list=getAllSensor(obj)
+            allobjs = obj.getAllObjWithChildren();
+            re = '^.*/Sensor/.*';
+            a = regexp(allobjs, re, 'match');
+            a(cellfun(@isempty,a))=[];  % 去除空值
+            list = a;
         end
         
         function list=getAllObjWithChildren(obj, father)
