@@ -485,17 +485,21 @@ classdef Scenario < handle
             disp(['Add ' num2str(constellation.Objects.Count) ' item(s) to ' constellation.InstanceName '!'])
         end
         
-        function newChain(obj, name, objects)
+        function newChain(obj, name, objects, color)
             % 创建Chain
             % Args: 
             %   - name: 名字
             %   - objects <cell char>: 对象STKpath的集合 形式应为 nx1
+            %   - [color <int>]: 
             chain = obj.root.CurrentScenario.Children.New('eChain', name);
             for i=1:size(objects)
                 chain.Objects.Add(char(objects(i)));
             end
             chain.Graphics.Animation.IsDirectionVisible = true;
             disp(['Add ' num2str(chain.Objects.Count) ' item(s) to ' chain.InstanceName '!'])
+            if nargin==4
+                chain.Graphics.Animation.Color = color;
+            end
         end
         
         function chain=getChain(obj, path)

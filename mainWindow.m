@@ -149,7 +149,7 @@ objs = {
     '/Application/STK/Scenario/Test/Constellation/Const_Sat';
     '/Application/STK/Scenario/Test/Facility/Taiyuan';
     };
-scenario.newChain('Chain', objs);
+scenario.newChain('Chain', objs, 55280);
 scenario.accessAER(60);
 
 % --- Executes on button press in pb_test.
