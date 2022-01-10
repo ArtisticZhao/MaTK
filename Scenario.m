@@ -229,7 +229,7 @@ classdef Scenario < handle
                 obj.attachSensor(missile, 'SA', 45, 90, 50);
                 obj.attachSensor(missile, 'SB', 45, -90, 50);
             end
-            
+            obj.missileSetAttitude(missile,0,0,0);
         end
         
         function missileSetAttitude(obj, missile, roll, pitch, yaw)
@@ -242,7 +242,7 @@ classdef Scenario < handle
             missile.SetAttitudeType('eAttitudeStandard');
             standard = missile.Attitude;
             standard.Basic.SetProfileType('eProfileFixedInAxes'); 
-            interfix = standard.Basic.Profile;
+            interfix = standard.Basic.Profile
             interfix.Orientation.AssignYPRAngles('eYPR', yaw, pitch, roll); 
         end
         
