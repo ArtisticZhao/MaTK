@@ -62,6 +62,8 @@ classdef Scenario < handle
             obj.start_time = datetime(start_time,'InputFormat','dd MMM yyyy HH:mm:ss.SSS', 'local', 'en_US');
             obj.stop_time = datetime(stop_time,'InputFormat','dd MMM yyyy HH:mm:ss.SSS', 'local', 'en_US');
             obj.root.CurrentTime = 0;
+            % 仿真时间step
+            obj.root.CurrentScenario.Animation.AnimStepValue = 1;
         end
         
         function start_time=getStartTime(obj)
@@ -199,10 +201,6 @@ classdef Scenario < handle
             trajectory = missile.Trajectory;
             trajectory.Filename = path_of_e;
             trajectory.Propagate;
-            % 以下两行隐藏了3D图中的地面轨道投影
-            missile.VO.Trajectory.TrackData.PassData.GroundTrack.SetLeadDataType('eDataNone');
-            missile.VO.Trajectory.TrackData.PassData.GroundTrack.SetTrailDataType('eDataNone');
-           
             % 设置飞行器模型
             if nargin >= 5
                 if size(modelPath)
@@ -230,6 +228,23 @@ classdef Scenario < handle
                 obj.attachSensor(missile, 'SB', 45, -90, 50);
             end
             obj.missileSetAttitude(missile,0,0,0);
+            
+            % 以下两行隐藏了3D图中的地面轨道投影
+            missile.VO.Trajectory.TrackData.PassData.GroundTrack.SetLeadDataType('eDataNone');
+            missile.VO.Trajectory.TrackData.PassData.GroundTrack.SetTrailDataType('eDataNone');
+        end
+        
+        function missileReloadEfile(obj, missileName, efile)
+            missile = obj.getByPath(sprintf('/Application/STK/Scenario/Test/Missile/%s', missileName));
+            missile.Graphics.Attributes.IsVisible = false;
+            % 从外部文件导入轨道信息
+            trajectory = missile.Trajectory;
+            trajectory.Filename = efile;
+            trajectory.Propagate;
+            missile.Graphics.Attributes.IsVisible = true;
+            % 以下两行隐藏了3D图中的地面轨道投影
+            missile.VO.Trajectory.TrackData.PassData.GroundTrack.SetLeadDataType('eDataNone');
+            missile.VO.Trajectory.TrackData.PassData.GroundTrack.SetTrailDataType('eDataNone');
         end
         
         function missileSetAttitude(obj, missile, roll, pitch, yaw)
@@ -242,7 +257,7 @@ classdef Scenario < handle
             missile.SetAttitudeType('eAttitudeStandard');
             standard = missile.Attitude;
             standard.Basic.SetProfileType('eProfileFixedInAxes'); 
-            interfix = standard.Basic.Profile
+            interfix = standard.Basic.Profile;
             interfix.Orientation.AssignYPRAngles('eYPR', yaw, pitch, roll); 
         end
         
@@ -300,6 +315,11 @@ classdef Scenario < handle
         
         function sensorShowWhenAccessTo(obj, sensorPath, targetPath)
             cmd = sprintf('DisplayTimes %s State Access', sensorPath);
+            obj.root.ExecuteCommand(cmd);
+            % 删除原有数据, 这样在FXQ轨迹改变的时刻会会正确显示传感器
+            cmd = sprintf('DisplayTimes %s Access Clear', sensorPath);
+            obj.root.ExecuteCommand(cmd);
+            cmd = sprintf('DisplayTimes %s Intervals Clear', sensorPath);
             obj.root.ExecuteCommand(cmd);
             cmd = sprintf('DisplayTimes %s Access %s', sensorPath, targetPath);
             obj.root.ExecuteCommand(cmd);
@@ -527,6 +547,8 @@ classdef Scenario < handle
                 chain = nan;
             end
         end
+        
+        
         
         function [Name, AERTimes, Az, El, Range]=accessAER(obj, timeStep, filename)
             % 获取AER Access

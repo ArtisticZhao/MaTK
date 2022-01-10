@@ -111,7 +111,7 @@ function pb_add_sat_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 global scenario
-scenario.setPeriod('1 Jul 2007 12:00:00.000', '1 Jul 2007 17:00:00.000');
+scenario.setPeriod('1 Jul 2007 12:00:00.000', '2 Jul 2007 17:00:00.000');
 scenario.removeAll();
 % (obj, name, color, semimajor_axis_km, eccentricity, inclination_deg, RANN, argument_of_perigee_deg, ture_anomaly_deg)
 scenario.insertSatByOrbitalElements('S1', 65280, 7215.65, 2.86383e-16, 60, 57, 0, 135);
@@ -124,11 +124,12 @@ scenario.insertMissileByEFile('FXQ',55280, 'gj/1.e', 'gj/X47B_UCAV_Cert_v48.mdl'
 scenario.insertFacilityByGeo('Xiamen', 16776960, 24.4798, 118.082, 0);
 scenario.insertFacilityByGeo('Taiyuan', 16776960, 38.84, 111.61, 1.452);
 % 配置Sensor可见性
-scenario.sensorShowWhenAccessTo('/Application/STK/Scenario/Test/Missile/FXQ/Sensor/Sensor1', '/Application/STK/Scenario/Test/Satellite/S1/Sensor/Sensor');
-scenario.sensorShowWhenAccessTo('/Application/STK/Scenario/Test/Missile/FXQ/Sensor/Sensor2', '/Application/STK/Scenario/Test/Satellite/S2/Sensor/Sensor');
-scenario.sensorShowWhenAccessTo('/Application/STK/Scenario/Test/Missile/FXQ/Sensor/Sensor2', '/Application/STK/Scenario/Test/Satellite/S3/Sensor/Sensor');
-scenario.sensorShowWhenAccessTo('/Application/STK/Scenario/Test/Missile/FXQ/Sensor/Sensor2', '/Application/STK/Scenario/Test/Satellite/S4/Sensor/Sensor');
-scenario.sensorShowWhenAccessTo('/Application/STK/Scenario/Test/Missile/FXQ/Sensor/Sensor2', '/Application/STK/Scenario/Test/Satellite/S5/Sensor/Sensor');
+% scenario.sensorShowWhenAccessTo('/Application/STK/Scenario/Test/Missile/FXQ/Sensor/Sensor1', '/Application/STK/Scenario/Test/Satellite/S1/Sensor/Sensor');
+% scenario.sensorShowWhenAccessTo('/Application/STK/Scenario/Test/Missile/FXQ/Sensor/Sensor2', '/Application/STK/Scenario/Test/Satellite/S2/Sensor/Sensor');
+% scenario.sensorShowWhenAccessTo('/Application/STK/Scenario/Test/Missile/FXQ/Sensor/Sensor2', '/Application/STK/Scenario/Test/Satellite/S3/Sensor/Sensor');
+% scenario.sensorShowWhenAccessTo('/Application/STK/Scenario/Test/Missile/FXQ/Sensor/Sensor2', '/Application/STK/Scenario/Test/Satellite/S4/Sensor/Sensor');
+% scenario.sensorShowWhenAccessTo('/Application/STK/Scenario/Test/Missile/FXQ/Sensor/Sensor2', '/Application/STK/Scenario/Test/Satellite/S5/Sensor/Sensor');
+scenario.sensorShowAccess();
 % Const_Sat
 objs = {'/Application/STK/Scenario/Test/Satellite/S5/Sensor/Sensor';
     '/Application/STK/Scenario/Test/Satellite/S4/Sensor/Sensor';
@@ -151,6 +152,9 @@ objs = {
     };
 scenario.newChain('Chain', objs, 55280);
 scenario.accessAER(60);
+% 重新加载efile
+scenario.missileReloadEfile('FXQ', 'gj/11.e');
+scenario.sensorShowAccess();
 
 % --- Executes on button press in pb_test.
 function pb_test_Callback(hObject, eventdata, handles)
@@ -164,7 +168,8 @@ global scenario
 % scenario.getCurrentTime()
 res = scenario.getAllObjWithChildren();
 disp(res')
-scenario.animationSlower();
 scenario.animationReset();
+scenario.animationJumpForward1day();
+%scenario.animationReset();
 % scenario.sensorShowAccess();
 % h = createChain;
