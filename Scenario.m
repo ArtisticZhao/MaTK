@@ -252,9 +252,7 @@ classdef Scenario < handle
 %             trajectory.StopTime
             trajectory.EphemerisStartEpoch.SetExplicitTime(trajectory.StartTime);
 %             trajectory.EphemerisStartEpoch.TimeInstant
-            cmd = sprintf('LaunchWindow */Missile/%s LaunchWindow "%s" "%s', missileName, trajectory.StartTime, trajectory.StopTime);
-            obj.root.ExecuteCommand(cmd);
-            trajectory.Override
+
             % 以下两行隐藏了3D图中的地面轨道投影
             missile.VO.Trajectory.TrackData.PassData.GroundTrack.SetLeadDataType('eDataNone');
             missile.VO.Trajectory.TrackData.PassData.GroundTrack.SetTrailDataType('eDataNone');
@@ -424,6 +422,7 @@ classdef Scenario < handle
                     return
                 end
             end
+            object = {};
         end
         
         function dict=getAllObj(obj)
@@ -523,6 +522,17 @@ classdef Scenario < handle
                 constellation.Objects.Add(char(objects(i)));
             end
             disp(['Add ' num2str(constellation.Objects.Count) ' item(s) to ' constellation.InstanceName '!'])
+        end
+        
+        function child=getConstellationChild(obj, name)
+            const = obj.getByPath(sprintf('/Application/STK/Scenario/Test/Constellation/%s', name));
+            child = {};
+            if ~isempty(const)
+                const_objs = const.Objects;
+                for i = 0: const_objs.Count - 1
+                    child{end+1} = const_objs.Item(cast(i,'int32')).Path;                
+                end
+            end
         end
         
         function newChain(obj, name, objects, color)

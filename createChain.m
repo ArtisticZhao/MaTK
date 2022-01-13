@@ -24,7 +24,7 @@ function varargout = createChain(varargin)
 
 % Edit the above text to modify the response to help createChain
 
-% Last Modified by GUIDE v2.5 05-Jan-2022 13:58:54
+% Last Modified by GUIDE v2.5 06-Jan-2022 22:56:14
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -63,6 +63,7 @@ guidata(hObject, handles);
 % UIWAIT makes createChain wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
 % 创建在callback之间可以共享的数据结构
+handles.chainNum = 1;
 handles.node_count = 0;
 handles.mainGUIhand = hObject; % 保存根对象
 guidata(hObject, handles);  % 变更用户数据之后需要保存!
@@ -87,7 +88,18 @@ function lb_nodes_Callback(hObject, eventdata, handles)
 
 % Hints: contents = cellstr(get(hObject,'String')) returns lb_nodes contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from lb_nodes
-refresh_list(handles.lb_nodes, handles.lb_objall, handles.lb_objsel);
+global scenario;
+node_str = list_getCurrentStr(handles.lb_nodes);
+if ~isempty(node_str)  % 排除空节点
+    node_name = sprintf('const_%d_%s', handles.chainNum, node_str(1));
+    const_child = scenario.getConstellationChild(node_name);
+    if ~isempty(const_child) 
+        set(handles.lb_objsel, 'str', const_child);  % 清除备选项
+    else
+        % 如果为创建节点,则刷新
+        refresh_list(handles.lb_nodes, handles.lb_objall, handles.lb_objsel);
+    end
+end
 
 
 % --- Executes during object creation, after setting all properties.
@@ -190,11 +202,20 @@ function pb_save_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 global scenario
-node_str = list_getCurrentStr(handles.lb_nodes);
-savedname = sprintf('const_%s', node_str(1));
-objsel = get(handles.lb_objsel,'string');
-scenario.removeByPath(sprintf('Constellation/%s', savedname));
-scenario.newConstellation(savedname, objsel);
+try
+    chainNum = handles.chainNum;
+    node_str = list_getCurrentStr(handles.lb_nodes);
+    savedname = sprintf('const_%d_%s', chainNum,node_str(1));
+    objsel = get(handles.lb_objsel,'string');
+    scenario.removeByPath(sprintf('Constellation/%s', savedname));
+    scenario.newConstellation(savedname, objsel);
+    L = length(objsel);
+    showStr = strcat('节点创建成功，共有',num2str(L),'个目标');
+    set(handles.creatResult,'String',showStr);
+catch
+    showStr = strcat('节点创建失败，请重新保存节点！');
+    set(handles.creatResult,'String',showStr);
+end
 
 
 % --- Executes on button press in pb_chain.
@@ -203,23 +224,75 @@ function pb_chain_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 global scenario
-scenario.removeByPath('Chain/Chain_add');
+% scenario.removeByPath('Chain/Chain_add');
 objs = {};
+chainNum = handles.chainNum;
+list = scenario.getAllObjWithChildren();
+namePre = strsplit(list{1},'/');
+namePre = namePre(1:5);
+namePre = strcat(namePre{1},'/',namePre{2},'/',namePre{3},'/',namePre{4},...
+    '/',namePre{5},'/');
+strname = get(handles.chainName,'String');
+ 
 for i=1:handles.node_count
-   objs(end+1) = {sprintf('Constellation/const_%d',i)};
+   objs(end+1) = {strcat(namePre,sprintf('Constellation/const_%d_%d',chainNum,i))};
 end
-scenario.newChain('Chain_add', objs);
-scenario.accessAER(60);
-closereq(); % 关闭当前窗口
-
+if(isempty(strname))
+    chainName = strcat('Chain/',sprintf('chain%d',chainNum));
+    strname = sprintf('chain%d',chainNum);
+else
+    chainName = strcat('Chain/',strname);
+end
+color = [255*255,255*255*255+255*255+255,255*255+255];
+set(handles.chainName,'String',[]);
+scenario.removeByPath(chainName);
+try
+    scenario.newChain(strname,objs.',color(mod(handles.chainNum,3)+1));
+    chainPath = strcat(namePre,chainName);
+    [~,AERTime] = scenario.accessAER(1,chainPath,sprintf('%s.xlsx',strname));
+    AEREndTime = AERTime(end);
+    if(AEREndTime > scenario.accessEndTime)
+        scenario.accessEndTime = AEREndTime;
+    end
+    if(abs(scenario.accessEndTime - scenario.FXQEndTime)< (50 / 60 / 60 / 24) )
+        scenario.flag = 1;
+    else
+        scenario.flag = 0;
+    end
+    scenario.chainNum = handles.chainNum;
+    handles.chainNum = handles.chainNum + 1;
+    guidata(hObject, handles);  % 变更用户数据之后需要保存!
+    refresh_lb_nodes(handles.lb_nodes,hObject,handles);
+    % closereq(); % 关闭当前窗口
+    showStr = strcat('链路创建成功！');
+    set(handles.creatResult,'String',showStr);
+catch
+    showStr = strcat('链路创建失败，请检查各个节点是否存在空节点！');
+    set(handles.creatResult,'String',showStr);
+end
+    
 
 %% 功能相关函数
+function refresh_lb_nodes(lb_nodes,hObject,handles)
+set(lb_nodes, 'str', {});  % 清除备选项
+handles.node_count = 0;
+guidata(hObject, handles);  % 变更用户数据之后需要保存!
+
 function refresh_list(lb_nodes, lb_objall, lb_objsel)
-% TODO: 之后可以添加自动读取已经新建的内容!
 global scenario
 allobj = scenario.getAllObjWithChildren();
-set(lb_objall, 'str', allobj);
+inx = [];
+for i = 1 : length(allobj)
+    k = strfind(allobj{i},'Constellation');
+    if(~isempty(k))
+        inx = [inx,i];
+    end
+end
+allobj(inx) = [];
+
+set(lb_objall,'Value',length(allobj), 'str', allobj);
 set(lb_objsel, 'str', {});  % 清除备选项
+
 
 function str=list_getCurrentStr(listbox)
 index_selected = get(listbox,'Value');
@@ -240,12 +313,62 @@ if isa(oldstr, 'char')
 else
     oldstr(end+1) = addcell;
 end
-set(listbox, 'str', oldstr);
+set(listbox,'Value',length(oldstr), 'str', oldstr);
 
 
 function list_removeSelected(listbox)
 index_selected = get(listbox,'Value');
 oldstr = get(listbox,'string');
 oldstr(index_selected) = [];
-set(listbox, 'Value', -1);  % 取消选择
-set(listbox, 'str', oldstr);
+% set(listbox, 'Value', -1);  % 取消选择
+set(listbox,'Value',length(oldstr), 'str', oldstr);
+
+
+% --- Executes on button press in pb_chain.
+function pushbutton7_Callback(hObject, eventdata, handles)
+% hObject    handle to pb_chain (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+
+function chainName_Callback(hObject, eventdata, handles)
+% hObject    handle to chainName (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of chainName as text
+%        str2double(get(hObject,'String')) returns contents of chainName as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function chainName_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to chainName (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in pb_deleteChain.
+function pb_deleteChain_Callback(hObject, eventdata, handles)
+% hObject    handle to pb_deleteChain (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+global scenario
+try
+    index_selected = get(handles.lb_objall,'Value');
+    allobj = get(handles.lb_objall,'string');
+    stkpath = allobj(index_selected);
+    scenario.removeByPath(stkpath{1});
+    scenario.deleteAccess(stkpath{1});
+    showStr = strcat('链路删除成功！');
+    set(handles.creatResult,'String',showStr);
+catch
+    showStr = strcat('链路删除失败，请重新选择！');
+    set(handles.creatResult,'String',showStr);
+end
