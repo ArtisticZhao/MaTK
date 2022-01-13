@@ -153,7 +153,7 @@ objs = {
 scenario.newChain('Chain', objs, 55280);
 scenario.accessAER(60);
 % ÷ÿ–¬º”‘ÿefile
-scenario.missileReloadEfile('FXQ', 'gj/11.e');
+scenario.missileReloadEfile('FXQ', 'gj/2.e');
 scenario.sensorShowAccess();
 
 % --- Executes on button press in pb_test.
@@ -170,6 +170,8 @@ res = scenario.getAllObjWithChildren();
 disp(res')
 scenario.animationReset();
 scenario.animationJumpForward1day();
+% scenario.zoom_to('Missile/FXQ', 0);
+scenario.missileGetStopTime('FXQ')
 %scenario.animationReset();
 % scenario.sensorShowAccess();
 % h = createChain;

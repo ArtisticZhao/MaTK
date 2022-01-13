@@ -132,7 +132,9 @@ classdef Scenario < handle
            cmd = sprintf(cmd, target, target, id);
            obj.root.ExecuteCommand(cmd);
            % X夹角  Y夹角  距离 m
-           obj.root.ExecuteCommand('VO * ViewerPosition 30 0 30');
+           cmd = 'VO * ViewerPosition 30 0 30';
+%            cmd = sprintf(cmd, id)
+           obj.root.ExecuteCommand(cmd);
         end
 
         %% 添加/删除对象: Satellite Missile Sensor Facility
@@ -235,17 +237,35 @@ classdef Scenario < handle
         end
         
         function missileReloadEfile(obj, missileName, efile)
+           
             missile = obj.getByPath(sprintf('/Application/STK/Scenario/Test/Missile/%s', missileName));
-            missile.Graphics.Attributes.IsVisible = false;
+            missile.SetTrajectoryType('ePropagatorStkExternal');   % 设置外部文件
+            trajectory = missile.Trajectory;
+            trajectory.Override = false;
             % 从外部文件导入轨道信息
             trajectory = missile.Trajectory;
             trajectory.Filename = efile;
             trajectory.Propagate;
-            missile.Graphics.Attributes.IsVisible = true;
+%             cmd = sprintf('SetState */Missile/FXQ File "%s"', efile);
+%             obj.root.ExecuteCommand(cmd);
+%             trajectory.StartTime
+%             trajectory.StopTime
+            trajectory.EphemerisStartEpoch.SetExplicitTime(trajectory.StartTime);
+%             trajectory.EphemerisStartEpoch.TimeInstant
+            cmd = sprintf('LaunchWindow */Missile/%s LaunchWindow "%s" "%s', missileName, trajectory.StartTime, trajectory.StopTime);
+            obj.root.ExecuteCommand(cmd);
+            trajectory.Override
             % 以下两行隐藏了3D图中的地面轨道投影
             missile.VO.Trajectory.TrackData.PassData.GroundTrack.SetLeadDataType('eDataNone');
             missile.VO.Trajectory.TrackData.PassData.GroundTrack.SetTrailDataType('eDataNone');
         end
+        
+        function stopTime=missileGetStopTime(obj, name)
+             missile = obj.getByPath(sprintf('/Application/STK/Scenario/Test/Missile/%s', name));
+             trajectory = missile.Trajectory;
+             stopTime = trajectory.StopTime;
+        end
+        
         
         function missileSetAttitude(obj, missile, roll, pitch, yaw)
             % 修改missile姿态
