@@ -129,7 +129,7 @@ scenario.insertFacilityByGeo('Taiyuan', 16776960, 38.84, 111.61, 1.452);
 % scenario.sensorShowWhenAccessTo('/Application/STK/Scenario/Test/Missile/FXQ/Sensor/Sensor2', '/Application/STK/Scenario/Test/Satellite/S3/Sensor/Sensor');
 % scenario.sensorShowWhenAccessTo('/Application/STK/Scenario/Test/Missile/FXQ/Sensor/Sensor2', '/Application/STK/Scenario/Test/Satellite/S4/Sensor/Sensor');
 % scenario.sensorShowWhenAccessTo('/Application/STK/Scenario/Test/Missile/FXQ/Sensor/Sensor2', '/Application/STK/Scenario/Test/Satellite/S5/Sensor/Sensor');
-scenario.sensorShowAccess();
+% scenario.sensorShowAccess();
 % Const_Sat
 objs = {'/Application/STK/Scenario/Test/Satellite/S5/Sensor/Sensor';
     '/Application/STK/Scenario/Test/Satellite/S4/Sensor/Sensor';
@@ -154,7 +154,7 @@ scenario.newChain('Chain', objs, 55280);
 scenario.accessAER(60);
 % ÷ÿ–¬º”‘ÿefile
 scenario.missileReloadEfile('FXQ', 'gj/2.e');
-scenario.sensorShowAccess();
+% scenario.sensorShowAccess();
 
 % --- Executes on button press in pb_test.
 function pb_test_Callback(hObject, eventdata, handles)
@@ -174,7 +174,8 @@ global scenario
 % scenario.getConstellationChild('Const_M')
 % scenario.animationReset();
 % scenario.sensorShowAccess();
-scenario.renameScenario('asd');
+% scenario.renameScenario('asd');
 res = scenario.getAllObjWithChildren();
 disp(res')
+scenario.satelliteSetAttitudeByName('S1', 0, -10, 0);
 % h = createChain;

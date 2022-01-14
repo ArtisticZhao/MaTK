@@ -188,6 +188,11 @@ classdef Scenario < handle
                 obj.attachSensor(satellite, 'Sensor', 55);
             end
         end
+        
+        function satelliteSetAttitudeByName(obj, name, roll, pitch, yaw)
+            sat = obj.getByPath(sprintf('/Application/STK/Scenario/Test/Satellite/%s', name));
+            obj.missileSetAttitude(sat, roll, pitch, yaw);
+        end
 
         function insertMissileByEFile(obj, name, color, path_of_e, modelPath, attitudePath, sensor)
             % 根据e文件路径添加missile
@@ -267,7 +272,6 @@ classdef Scenario < handle
              trajectory = missile.Trajectory;
              stopTime = trajectory.StopTime;
         end
-        
         
         function missileSetAttitude(obj, missile, roll, pitch, yaw)
             % 修改missile姿态
