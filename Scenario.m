@@ -51,6 +51,10 @@ classdef Scenario < handle
             obj.root.ExecuteCommand('VO * Annotation Time Show Off ShowTimeStep Off');
             obj.root.ExecuteCommand('VO * Annotation Frame Show Off');
         end
+        
+        function renameScenario(obj, name)
+            obj.root.CurrentScenario.InstanceName = name;
+        end
        
         function setPeriod(obj, start_time, stop_time)
             % 设置仿真的开始和结束时间

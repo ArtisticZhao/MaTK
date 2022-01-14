@@ -166,8 +166,7 @@ global scenario
 % [latitude, longitude, altitude]=scenario.missileGetLLA('/Application/STK/Scenario/Scenario/Missile/FXQ')
 %  scenario.root.ExecuteCommand('VO * Annotation Time Show On ShowTimeStep Off');
 % scenario.getCurrentTime()
-% res = scenario.getAllObjWithChildren();
-% disp(res')
+
 % scenario.animationReset();
 % scenario.animationJumpForward1day();
 % scenario.zoom_to('Missile/FXQ', 0);
@@ -175,4 +174,7 @@ global scenario
 % scenario.getConstellationChild('Const_M')
 % scenario.animationReset();
 % scenario.sensorShowAccess();
-h = createChain;
+scenario.renameScenario('asd');
+res = scenario.getAllObjWithChildren();
+disp(res')
+% h = createChain;
