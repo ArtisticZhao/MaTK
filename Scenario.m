@@ -189,9 +189,18 @@ classdef Scenario < handle
             end
         end
         
+        function satelliteSetAttitude(obj, sat, roll, pitch, yaw)
+            sat.SetAttitudeType('eAttitudeStandard');
+            standard = sat.Attitude;
+            standard.Basic.SetProfileType('eProfileFixedInAxes'); 
+            interfix = standard.Basic.Profile;
+            interfix.ReferenceAxes = sprintf('%s/%s VVLH', sat.ClassName, sat.InstanceName);
+            interfix.Orientation.AssignYPRAngles('eYPR', yaw, pitch, roll); 
+        end
+        
         function satelliteSetAttitudeByName(obj, name, roll, pitch, yaw)
             sat = obj.getByPath(sprintf('/Application/STK/Scenario/Test/Satellite/%s', name));
-            obj.missileSetAttitude(sat, roll, pitch, yaw);
+            obj.satelliteSetAttitude(sat, roll, pitch, yaw);
         end
 
         function insertMissileByEFile(obj, name, color, path_of_e, modelPath, attitudePath, sensor)
@@ -321,6 +330,8 @@ classdef Scenario < handle
             %   - ConeAngle: Angular separation between points in a pattern  参数为半锥角
             %   - AngularResolution: Angular separation between points in a pattern. 为角分辨率
             sensor.CommonTasks.SetPatternSimpleConic(coneHalfAngle, 0.1);  
+            % 修改指向空间的长度
+            sensor.VO.SpaceProjection = 1000;
             if nargin == 6
                 % 定义传感器指向
                 sensor.CommonTasks.SetPointingFixedAzEl(Az,El,'eAzElAboutBoresightRotate');
